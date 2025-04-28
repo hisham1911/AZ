@@ -22,21 +22,27 @@ export default function SpinnerLoader() {
           (href.startsWith("/") || href.startsWith("#")) &&
           !href.includes("http")
         ) {
+          // تجاهل الروابط التي تشير إلى نفس الصفحة الحالية
+          if (href === pathname || href === `${pathname}/`) {
+            return;
+          }
           setShowLoader(true);
         }
       }
     };
 
-    // عند تغيير المسار، تأكد من أن اللودر يظهر
-    setShowLoader(true);
+    // عند تغيير المسار، تأكد من أن اللودر يظهر فقط إذا كان المسار مختلفاً
+    if (pathname) {
+      setShowLoader(true);
+    }
 
     // إضافة مستمع الأحداث للنقرات
     document.addEventListener("click", handleLinkClick);
 
-    // إخفاء اللودر بعد فترة
+    // إخفاء اللودر بعد فترة قصيرة
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 800);
+    }, 300); // تقليل وقت العرض إلى 300 مللي ثانية
 
     return () => {
       document.removeEventListener("click", handleLinkClick);
@@ -58,6 +64,7 @@ export default function SpinnerLoader() {
             width={40}
             height={40}
             className="object-contain"
+            priority
           />
         </div>
       </div>
@@ -84,6 +91,7 @@ export function CenteredSpinner({ size = "md" }) {
             width={size === "lg" ? 60 : size === "md" ? 40 : 24}
             height={size === "lg" ? 60 : size === "md" ? 40 : 24}
             className="object-contain"
+            priority
           />
         </div>
       </div>

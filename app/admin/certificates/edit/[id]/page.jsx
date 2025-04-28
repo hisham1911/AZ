@@ -70,7 +70,7 @@ export default function EditCertificatePage({ params }) {
       try {
         // Use direct endpoint to get certificate data by ID
         const response = await fetch(
-          `https://localhost:7246/api/Services/getById?id=${certificateId}`
+          `https://azinternational-eg.com/api/Services/getById?id=${certificateId}`
         );
 
         if (response.ok) {
