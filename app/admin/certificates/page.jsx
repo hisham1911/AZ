@@ -6,9 +6,7 @@ import {
   Award,
   Search,
   Plus,
-  Filter,
   MoreHorizontal,
-  Download,
   Trash2,
   Edit,
   CheckCircle,
@@ -33,14 +31,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { FadeIn } from "@/components/animations/fade-in";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -63,7 +53,6 @@ export default function CertificatesPage() {
   const [certificates, setCertificates] = useState([]); // Certificates list
   const [loading, setLoading] = useState(false); // Loading state - initially false
   const [searchQuery, setSearchQuery] = useState(""); // Search text
-  const [selectedCertificates, setSelectedCertificates] = useState([]); // Selected certificates
   const [apiError, setApiError] = useState(null); // API error if any
   const [hasSearched, setHasSearched] = useState(false); // Track if user has searched
 
@@ -133,10 +122,18 @@ export default function CertificatesPage() {
       const transformedData = data.map((item) => ({
         id: `CERT-${item.id}`,
         name: item.name || "N/A",
-        title:
+        method:
           item.method === 1
-            ? "ISO Certificate"
-            : `Certificate Type ${item.method}`,
+            ? "Magnetic Particle Testing"
+            : item.method === 2
+            ? "Liquid Penetrant Testing"
+            : item.method === 3
+            ? "Radiographic Testing"
+            : item.method === 4
+            ? "Ultrasonic Testing"
+            : item.method === 5
+            ? "Visual Testing"
+            : "Unknown Method",
         serialNumber: item.s_N || "N/A",
         issueDate: item.startDate ? new Date(item.startDate) : new Date(),
         expiryDate: item.endDate
@@ -164,47 +161,6 @@ export default function CertificatesPage() {
   useEffect(() => {
     // We don't automatically search when first loading the page
   }, []);
-
-  /**
-   * Filter certificates based on search
-   */
-  const filteredCertificates = certificates.filter((cert) => {
-    // Match with search
-    const matchesSearch =
-      searchQuery.trim() === "" ||
-      cert.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.serialNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.title?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesSearch;
-  });
-
-  /**
-   * Select/deselect all certificates
-   * @param {boolean} checked - Selection state
-   */
-  const handleSelectAll = (checked) => {
-    if (checked) {
-      setSelectedCertificates(filteredCertificates.map((cert) => cert.id));
-    } else {
-      setSelectedCertificates([]);
-    }
-  };
-
-  /**
-   * Select/deselect one certificate
-   * @param {string} id - Certificate ID
-   * @param {boolean} checked - Selection state
-   */
-  const handleSelectCertificate = (id, checked) => {
-    if (checked) {
-      setSelectedCertificates([...selectedCertificates, id]);
-    } else {
-      setSelectedCertificates(
-        selectedCertificates.filter((certId) => certId !== id)
-      );
-    }
-  };
 
   /**
    * Navigate to create certificate page
@@ -241,50 +197,12 @@ export default function CertificatesPage() {
 
       // Remove certificate from state
       setCertificates(certificates.filter((cert) => cert.id !== id));
-      setSelectedCertificates(
-        selectedCertificates.filter((certId) => certId !== id)
-      );
     } catch (error) {
       console.error("Error deleting certificate:", error);
       // Show error message
       toast({
         title: "Error",
         description: "Failed to delete certificate. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  /**
-   * Delete selected certificates
-   */
-  const handleBulkDelete = async () => {
-    if (selectedCertificates.length === 0) return;
-
-    try {
-      // Delete each selected certificate
-      for (const certId of selectedCertificates) {
-        const numericId = certId.split("-")[1];
-        await deleteService(numericId);
-      }
-
-      // Show success message
-      toast({
-        title: "Certificates Deleted",
-        description: `${selectedCertificates.length} certificate(s) successfully deleted.`,
-      });
-
-      // Remove certificates from state
-      setCertificates(
-        certificates.filter((cert) => !selectedCertificates.includes(cert.id))
-      );
-      setSelectedCertificates([]);
-    } catch (error) {
-      console.error("Error deleting certificates:", error);
-      // Show error message
-      toast({
-        title: "Error",
-        description: "Failed to delete some certificates. Please try again.",
         variant: "destructive",
       });
     }
@@ -404,41 +322,10 @@ export default function CertificatesPage() {
             </div>
           ) : (
             <div>
-              {/* Display bulk actions bar when certificates are selected */}
-              {selectedCertificates.length > 0 && (
-                <div className="p-3 bg-blue-50 border-b flex items-center justify-between">
-                  <span className="text-sm text-blue-700">
-                    {selectedCertificates.length} certificate(s) selected
-                  </span>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4 mr-2" /> Export Selected
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleBulkDelete}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" /> Delete Selected
-                    </Button>
-                  </div>
-                </div>
-              )}
-
               {/* Certificates table */}
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[50px]">
-                      <Checkbox
-                        checked={
-                          filteredCertificates.length > 0 &&
-                          selectedCertificates.length ===
-                            filteredCertificates.length
-                        }
-                        onCheckedChange={handleSelectAll}
-                      />
-                    </TableHead>
                     <TableHead>Certificate</TableHead>
                     <TableHead>Recipient</TableHead>
                     <TableHead>Serial Number</TableHead>
@@ -450,10 +337,10 @@ export default function CertificatesPage() {
                 </TableHeader>
                 <TableBody>
                   {/* Display message when no certificates are found */}
-                  {filteredCertificates.length === 0 ? (
+                  {certificates.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={8}
+                        colSpan={7}
                         className="text-center py-10 text-gray-500"
                       >
                         {hasSearched
@@ -465,21 +352,13 @@ export default function CertificatesPage() {
                     </TableRow>
                   ) : (
                     /* Display certificates */
-                    filteredCertificates.map((cert) => (
+                    certificates.map((cert) => (
                       <TableRow key={cert.id} className="hover:bg-gray-50">
-                        <TableCell>
-                          <Checkbox
-                            checked={selectedCertificates.includes(cert.id)}
-                            onCheckedChange={(checked) =>
-                              handleSelectCertificate(cert.id, checked)
-                            }
-                          />
-                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Award className="h-5 w-5 text-blue-600" />
                             <div>
-                              <p className="font-medium">{cert.title}</p>
+                              <p className="font-medium">{cert.method}</p>
                               <p className="text-xs text-gray-500">
                                 {cert.category}
                               </p>
@@ -509,17 +388,6 @@ export default function CertificatesPage() {
                                 onClick={() => handleEditCertificate(cert.id)}
                               >
                                 <Edit className="h-4 w-4 mr-2" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  window.open(
-                                    `/certificates/${cert.serialNumber}`,
-                                    "_blank"
-                                  )
-                                }
-                              >
-                                <Download className="h-4 w-4 mr-2" /> View
-                                Certificate
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-red-600"

@@ -41,11 +41,8 @@ export default function EditCertificatePage({ params }) {
   const router = useRouter();
   const { toast } = useToast();
 
-  // Use React.use to access parameters
   const resolvedParams = React.use(params);
   const id = resolvedParams.id;
-
-  // Extract ID number from CERT-{id} format
   const certificateId = id.startsWith("CERT-") ? id.substring(5) : id;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +50,7 @@ export default function EditCertificatePage({ params }) {
   const [formData, setFormData] = useState({
     name: "",
     s_N: "",
-    method: 1,
+    method: "1",
     startDate: "",
     endDate: "",
     location: {
@@ -63,12 +60,10 @@ export default function EditCertificatePage({ params }) {
     },
   });
 
-  // Fetch certificate data on page load
   useEffect(() => {
     const fetchCertificateData = async () => {
       setIsLoading(true);
       try {
-        // Use direct endpoint to get certificate data by ID
         const response = await fetch(
           `https://azinternational-eg.com/api/Services/getById?id=${certificateId}`
         );
@@ -77,11 +72,10 @@ export default function EditCertificatePage({ params }) {
           const certificate = await response.json();
           console.log("Certificate data fetched:", certificate);
 
-          // Set form data
           setFormData({
             name: certificate.name || "",
             s_N: certificate.s_N || "",
-            method: certificate.method || 1,
+            method: certificate.method?.toString() || "1",
             startDate: certificate.startDate
               ? new Date(certificate.startDate)
               : "",
@@ -115,11 +109,9 @@ export default function EditCertificatePage({ params }) {
     fetchCertificateData();
   }, [certificateId, router, toast]);
 
-  // Update form value
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
-      // Handle nested fields like location.country
       const [parent, child] = name.split(".");
       setFormData({
         ...formData,
@@ -129,7 +121,6 @@ export default function EditCertificatePage({ params }) {
         },
       });
     } else {
-      // Handle regular fields
       setFormData({
         ...formData,
         [name]: value,
@@ -137,7 +128,6 @@ export default function EditCertificatePage({ params }) {
     }
   };
 
-  // Update date
   const handleDateChange = (date, fieldName) => {
     setFormData({
       ...formData,
@@ -145,45 +135,35 @@ export default function EditCertificatePage({ params }) {
     });
   };
 
-  // Update dropdown value
   const handleSelectChange = (value, fieldName) => {
-    // Convert value to number if it's method
-    const processedValue = fieldName === "method" ? parseInt(value, 10) : value;
     setFormData({
       ...formData,
-      [fieldName]: processedValue,
+      [fieldName]: value,
     });
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
-      console.log("Form data being sent:", formData);
-
-      // Prepare data for submission
       const updatedData = {
-        id: parseInt(certificateId, 10), // Ensure ID is a number
+        id: parseInt(certificateId, 10),
         name: formData.name,
         s_N: formData.s_N,
-        method: formData.method,
+        method: parseInt(formData.method),
         startDate: formData.startDate,
         endDate: formData.endDate,
         location: formData.location,
       };
 
-      // Call API to update certificate
-      const result = await updateService(certificateId, updatedData);
-      console.log("Certificate updated:", result);
+      await updateService(certificateId, updatedData);
 
       toast({
         title: "Updated",
         description: "Certificate has been successfully updated",
       });
 
-      // Return to certificates page
       router.push("/admin/certificates");
     } catch (error) {
       console.error("Error updating certificate:", error);
@@ -238,11 +218,11 @@ export default function EditCertificatePage({ params }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="name">Recipient Name</Label>
+                      <Label htmlFor="name">Certificate Name</Label>
                       <Input
                         id="name"
                         name="name"
-                        placeholder="Enter full name"
+                        placeholder="Enter certificate name"
                         value={formData.name}
                         onChange={handleInputChange}
                         className="mt-1"
@@ -264,20 +244,28 @@ export default function EditCertificatePage({ params }) {
                     </div>
 
                     <div>
-                      <Label htmlFor="method">Certificate Type</Label>
+                      <Label htmlFor="method">Certificate Method</Label>
                       <Select
-                        value={formData.method.toString()}
+                        value={formData.method}
                         onValueChange={(value) =>
                           handleSelectChange(value, "method")
                         }
                       >
                         <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Select certificate type" />
+                          <SelectValue placeholder="Select certificate method" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">ISO Certificate</SelectItem>
-                          <SelectItem value="2">Certificate Type 2</SelectItem>
-                          <SelectItem value="3">Certificate Type 3</SelectItem>
+                          <SelectItem value="1">
+                            Magnetic Particle Testing
+                          </SelectItem>
+                          <SelectItem value="2">
+                            Liquid Penetrant Testing
+                          </SelectItem>
+                          <SelectItem value="3">
+                            Radiographic Testing
+                          </SelectItem>
+                          <SelectItem value="4">Ultrasonic Testing</SelectItem>
+                          <SelectItem value="5">Visual Testing</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -291,19 +279,19 @@ export default function EditCertificatePage({ params }) {
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full mt-1 justify-start text-left",
-                              !formData.startDate && "text-gray-500"
+                              "w-full justify-start text-left font-normal mt-1",
+                              !formData.startDate && "text-muted-foreground"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {formData.startDate
-                              ? format(formData.startDate, "PPP", {
-                                  locale: en,
-                                })
-                              : "Select date"}
+                            {formData.startDate ? (
+                              format(formData.startDate, "PPP", { locale: en })
+                            ) : (
+                              <span>Select a date</span>
+                            )}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="w-auto p-0">
                           <Calendar
                             mode="single"
                             selected={formData.startDate}
@@ -323,25 +311,27 @@ export default function EditCertificatePage({ params }) {
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full mt-1 justify-start text-left",
-                              !formData.endDate && "text-gray-500"
+                              "w-full justify-start text-left font-normal mt-1",
+                              !formData.endDate && "text-muted-foreground"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {formData.endDate
-                              ? format(formData.endDate, "PPP", { locale: en })
-                              : "Select date"}
+                            {formData.endDate ? (
+                              format(formData.endDate, "PPP", { locale: en })
+                            ) : (
+                              <span>Select a date</span>
+                            )}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="w-auto p-0">
                           <Calendar
                             mode="single"
                             selected={formData.endDate}
                             onSelect={(date) =>
                               handleDateChange(date, "endDate")
                             }
-                            initialFocus
                             disabled={(date) => date < formData.startDate}
+                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -363,31 +353,36 @@ export default function EditCertificatePage({ params }) {
                         value={formData.location.country}
                         onChange={handleInputChange}
                         className="mt-1"
+                        required
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="location.state">City</Label>
+                      <Label htmlFor="location.state">State</Label>
                       <Input
                         id="location.state"
                         name="location.state"
-                        placeholder="Enter city name"
+                        placeholder="Enter state name"
                         value={formData.location.state}
                         onChange={handleInputChange}
                         className="mt-1"
+                        required
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <Label htmlFor="location.streetAddress">Address</Label>
+                      <Label htmlFor="location.streetAddress">
+                        Street Address
+                      </Label>
                       <Textarea
                         id="location.streetAddress"
                         name="location.streetAddress"
-                        placeholder="Enter detailed address"
+                        placeholder="Enter street address"
                         value={formData.location.streetAddress}
                         onChange={handleInputChange}
                         className="mt-1"
                         rows={3}
+                        required
                       />
                     </div>
                   </div>
