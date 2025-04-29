@@ -22,16 +22,7 @@ export default function Hero() {
 
       <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="relative h-32 w-32 mb-6">
-            <Image
-              src="/images/az-logo.png"
-              alt="AZ International Logo"
-              width={128}
-              height={128}
-              priority
-              className="animate-pulse"
-            />
-          </div>
+          {/* تم حذف الشعار هنا */}
         </div>
 
         <div className="max-w-3xl mx-auto text-center">
