@@ -1,8 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CheckCircle } from "lucide-react"
-import { FadeIn } from "@/components/animations/fade-in"
-import { StaggerChildren } from "@/components/animations/stagger-children"
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckCircle } from "lucide-react";
+import { FadeIn } from "@/components/animations/fade-in";
+import { StaggerChildren } from "@/components/animations/stagger-children";
+import { useEffect, useState } from "react";
 
 export default function ServicesPage() {
   const serviceCategories = [
@@ -56,21 +59,53 @@ export default function ServicesPage() {
         "Requalification in NDT techniques",
       ],
     },
-  ]
+  ];
+
+  const [activeTab, setActiveTab] = useState("quality");
+
+  useEffect(() => {
+    const hash =
+      typeof window !== "undefined"
+        ? window.location.hash.replace("#", "")
+        : "";
+    if (hash && serviceCategories.some((cat) => cat.id === hash)) {
+      setActiveTab(hash);
+    }
+    const onHashChange = () => {
+      const newHash = window.location.hash.replace("#", "");
+      if (newHash && serviceCategories.some((cat) => cat.id === newHash)) {
+        setActiveTab(newHash);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12">
       <FadeIn>
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">Our Services</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+          Our Services
+        </h1>
 
         <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-12 text-center">
-          AZ INTERNATIONAL provides comprehensive inspection, testing, and training services adhering to the highest
-          international standards.
+          AZ INTERNATIONAL provides comprehensive inspection, testing, and
+          training services adhering to the highest international standards.
         </p>
       </FadeIn>
 
       <FadeIn delay={200}>
-        <Tabs defaultValue="quality" className="max-w-5xl mx-auto">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="max-w-5xl mx-auto"
+        >
           <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-8">
             {serviceCategories.map((category) => (
               <TabsTrigger
@@ -84,7 +119,12 @@ export default function ServicesPage() {
           </TabsList>
 
           {serviceCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="space-y-6">
+            <TabsContent
+              key={category.id}
+              value={category.id}
+              className="space-y-6"
+              id={category.id}
+            >
               <FadeIn>
                 <h2 className="text-2xl font-semibold mb-4">{category.name}</h2>
               </FadeIn>
@@ -109,5 +149,5 @@ export default function ServicesPage() {
         </Tabs>
       </FadeIn>
     </div>
-  )
+  );
 }

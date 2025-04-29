@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import Image from "next/image"
-import { FadeIn } from "@/components/animations/fade-in"
-import { RevealText } from "@/components/animations/reveal-text"
-import { WaveAnimation } from "@/components/animations/wave_animation"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
+import { FadeIn } from "@/components/animations/fade-in";
+import { RevealText } from "@/components/animations/reveal-text";
+import { WaveAnimation } from "@/components/animations/wave_animation";
 
 export default function Hero() {
   return (
@@ -41,18 +41,28 @@ export default function Hero() {
 
           <FadeIn delay={500} duration={800}>
             <p className="text-xl md:text-2xl text-gray-300 mb-8">
-              Providing high-quality inspection, testing, and technical consulting services since 2012. Trusted by
-              industry leaders across the Middle East.
+              Providing high-quality inspection, testing, and technical
+              consulting services since 2012. Trusted by industry leaders across
+              the Middle East.
             </p>
           </FadeIn>
 
           <FadeIn delay={800} duration={800}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button
+                asChild
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 <Link href="/services">Explore Our Services</Link>
               </Button>
 
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10"
+              >
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
@@ -65,5 +75,5 @@ export default function Hero() {
         <WaveAnimation className="w-full h-full" data-inverted="true" />
       </div>
     </div>
-  )
+  );
 }

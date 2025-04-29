@@ -12,7 +12,6 @@ export default function SpinnerLoader() {
   useEffect(() => {
     // تتبع النقرات على روابط التنقل
     const handleLinkClick = (e) => {
-      // التحقق من أن العنصر المنقور عليه هو رابط
       const linkElement = e.target.closest("a");
       if (linkElement) {
         const href = linkElement.getAttribute("href");
@@ -22,8 +21,14 @@ export default function SpinnerLoader() {
           (href.startsWith("/") || href.startsWith("#")) &&
           !href.includes("http")
         ) {
-          // تجاهل الروابط التي تشير إلى نفس الصفحة الحالية
-          if (href === pathname || href === `${pathname}/`) {
+          // تجاهل الروابط التي تشير إلى نفس الصفحة الحالية أو مجرد تغيير hash
+          const [hrefPath] = href.split("#");
+          if (
+            href === pathname ||
+            href === `${pathname}/` ||
+            href.startsWith("#") ||
+            (hrefPath && hrefPath === pathname)
+          ) {
             return;
           }
           setShowLoader(true);
@@ -31,18 +36,16 @@ export default function SpinnerLoader() {
       }
     };
 
-    // عند تغيير المسار، تأكد من أن اللودر يظهر فقط إذا كان المسار مختلفاً
+    // عند تغيير المسار، أظهر اللودر فقط إذا تغير المسار فعليًا وليس الهاش
     if (pathname) {
       setShowLoader(true);
     }
 
-    // إضافة مستمع الأحداث للنقرات
     document.addEventListener("click", handleLinkClick);
 
-    // إخفاء اللودر بعد فترة قصيرة
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 300); // تقليل وقت العرض إلى 300 مللي ثانية
+    }, 300);
 
     return () => {
       document.removeEventListener("click", handleLinkClick);
