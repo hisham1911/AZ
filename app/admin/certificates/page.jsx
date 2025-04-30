@@ -13,6 +13,7 @@ import {
   XCircle,
   AlertCircle,
   AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,9 @@ import {
 } from "@/lib/api-services";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDateForDisplay } from "@/utils/date-utils";
+import Link from "next/link";
+import { Edit as EditIcon, Trash2 as TrashIcon } from "lucide-react";
+import { getServiceMethodLabel } from "@/lib/enums";
 
 /**
  * Certificate Management Page
@@ -50,106 +54,80 @@ export default function CertificatesPage() {
   const { toast } = useToast();
 
   // Page states
-  const [certificates, setCertificates] = useState([]); // Certificates list
+  const [certificates, setCertificates] = useState({}); // Certificates list
   const [loading, setLoading] = useState(false); // Loading state - initially false
   const [searchQuery, setSearchQuery] = useState(""); // Search text
-  const [apiError, setApiError] = useState(null); // API error if any
+  const [searchType, setSearchType] = useState("name"); // Search type: 'name' or 'serial'
+  const [error, setError] = useState(null); // API error if any
   const [hasSearched, setHasSearched] = useState(false); // Track if user has searched
 
   /**
-   * Function to fetch certificates based on search term
+   * Function to fetch certificates based on search term and type
    */
-  const fetchCertificates = async () => {
+  const searchCertificates = async (query, type = searchType) => {
     setLoading(true);
-    setApiError(null);
+    setError(null);
     setHasSearched(true);
 
     try {
       // Check if search value is empty
-      const searchTerm = searchQuery.trim();
+      const searchTerm = query.trim();
 
       // If no search, don't display any certificates
       if (!searchTerm) {
-        console.log("No search query, no certificates will be displayed");
-        setCertificates([]);
+        setCertificates({});
         setLoading(false);
         return;
       }
 
-      console.log("Searching for certificates using:", searchTerm);
+      let results = [];
 
-      // Call API for search
-      let data = [];
-
-      // Search by name
-      try {
-        const nameResults = await searchServiceByName(searchTerm);
-        if (nameResults && nameResults.length > 0) {
-          data = [...nameResults];
-        }
-      } catch (nameError) {
-        console.error("Error searching by name:", nameError);
-      }
-
-      // If search is numeric, also search by serial number
-      if (/\d/.test(searchTerm)) {
+      // Search based on type
+      if (type === "serial") {
         try {
-          const serialResults = await searchServiceBySerialNumber(searchTerm);
-          if (serialResults && serialResults.length > 0) {
-            // Add results that don't already exist (avoid duplicates)
-            const existingIds = new Set(data.map((item) => item.id));
-            serialResults.forEach((item) => {
-              if (!existingIds.has(item.id)) {
-                data.push(item);
-              }
-            });
-          }
+          results = await searchServiceBySerialNumber(searchTerm);
         } catch (serialError) {
-          console.error("Error searching by serial number:", serialError);
+          // Display user-friendly error message
+          setError(`Error searching by serial number: ${serialError.message}`);
+          setCertificates({});
+          setLoading(false);
+          return;
+        }
+      } else {
+        // Default to name search
+        try {
+          results = await searchServiceByName(searchTerm);
+        } catch (nameError) {
+          // Display user-friendly error message
+          setError(`Error searching by name: ${nameError.message}`);
+          setCertificates({});
+          setLoading(false);
+          return;
         }
       }
 
-      console.log("Received certificates:", data);
-
-      if (!data || data.length === 0) {
-        console.log("No certificates found");
-        setCertificates([]);
+      if (!results || results.length === 0) {
+        setCertificates({});
         setLoading(false);
         return;
       }
 
-      // Transform API data to UI model
-      const transformedData = data.map((item) => ({
-        id: `CERT-${item.id}`,
-        name: item.name || "N/A",
-        method:
-          item.method === 1
-            ? "Magnetic Particle Testing"
-            : item.method === 2
-            ? "Liquid Penetrant Testing"
-            : item.method === 3
-            ? "Radiographic Testing"
-            : item.method === 4
-            ? "Ultrasonic Testing"
-            : item.method === 5
-            ? "Visual Testing"
-            : "Unknown Method",
-        serialNumber: item.s_N || "N/A",
-        issueDate: item.startDate ? new Date(item.startDate) : new Date(),
-        expiryDate: item.endDate
-          ? new Date(item.endDate)
-          : new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-        status:
-          item.endDate && new Date(item.endDate) > new Date()
-            ? "active"
-            : "expired",
-        category: "Quality Management",
-      }));
+      // Group certificates by name
+      const groupedCertificates = {};
+      results.forEach((cert) => {
+        if (!groupedCertificates[cert.name]) {
+          groupedCertificates[cert.name] = [];
+        }
+        groupedCertificates[cert.name].push(cert);
+      });
 
-      setCertificates(transformedData);
+      setCertificates(groupedCertificates);
     } catch (error) {
-      console.error("Error fetching certificates:", error);
-      setApiError(error.message);
+      // Display friendly message to user without logging to console
+      setError(
+        "An error occurred during search. Please try again or contact support."
+      );
+      setCertificates({});
     } finally {
       setLoading(false);
     }
@@ -183,11 +161,8 @@ export default function CertificatesPage() {
    */
   const handleDeleteCertificate = async (id) => {
     try {
-      // Extract numeric ID from text (e.g., "CERT-123" -> 123)
-      const numericId = id.split("-")[1];
-
       // Call API to delete certificate
-      await deleteService(numericId);
+      await deleteService(id);
 
       // Show success message
       toast({
@@ -195,14 +170,29 @@ export default function CertificatesPage() {
         description: `Certificate ${id} has been successfully deleted.`,
       });
 
-      // Remove certificate from state
-      setCertificates(certificates.filter((cert) => cert.id !== id));
+      // Remove certificate from state by filtering it out of all groups
+      setCertificates((prevCertificates) => {
+        const updatedCertificates = {};
+
+        // Go through each name group
+        Object.entries(prevCertificates).forEach(([name, certs]) => {
+          // Filter out the deleted certificate
+          const updatedCerts = certs.filter((cert) => cert.srId !== id);
+
+          // Only add back non-empty groups
+          if (updatedCerts.length > 0) {
+            updatedCertificates[name] = updatedCerts;
+          }
+        });
+
+        return updatedCertificates;
+      });
     } catch (error) {
-      console.error("Error deleting certificate:", error);
-      // Show error message
+      // Show specific error message from API without logging to console
       toast({
         title: "Error",
-        description: "Failed to delete certificate. Please try again.",
+        description:
+          error.message || "Failed to delete certificate. Please try again.",
         variant: "destructive",
       });
     }
@@ -256,6 +246,42 @@ export default function CertificatesPage() {
     }
   };
 
+  /**
+   * Format date for display
+   * @param {string} dateString - Date string to format
+   * @returns {string} - Formatted date
+   */
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch (error) {
+      return "Invalid date";
+    }
+  };
+
+  /**
+   * Get location string from certificate
+   * @param {Object} cert - Certificate object
+   * @returns {string} - Formatted location string
+   */
+  const getLocationString = (cert) => {
+    // Remove debug logging
+    const parts = [];
+    if (cert.streetAddress && cert.streetAddress.trim())
+      parts.push(cert.streetAddress.trim());
+    if (cert.state && cert.state.trim()) parts.push(cert.state.trim());
+    if (cert.country && cert.country.trim()) parts.push(cert.country.trim());
+
+    // If we have any parts, join them with comma, otherwise return N/A
+    return parts.length > 0 ? parts.join(", ") : "N/A";
+  };
+
   return (
     <div className="space-y-6">
       <FadeIn>
@@ -275,138 +301,196 @@ export default function CertificatesPage() {
       </FadeIn>
 
       {/* Display API error message if any */}
-      {apiError && (
+      {error && (
         <FadeIn>
           <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>API Connection Error</AlertTitle>
-            <AlertDescription>
-              <p>
-                Failed to connect to API. Please check if the backend server is
-                running and accessible.
-              </p>
-              <p className="mt-2 text-xs">{apiError}</p>
-            </AlertDescription>
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         </FadeIn>
       )}
 
       <FadeIn delay={100}>
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Search field */}
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-            <div className="flex items-center gap-2">
-              <Input
-                type="search"
-                placeholder="Search certificates..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 min-w-[250px]"
-                onKeyDown={(e) => e.key === "Enter" && fetchCertificates()}
-              />
-              <Button variant="secondary" onClick={fetchCertificates}>
-                Search
-              </Button>
+          {/* Search controls */}
+          <div className="w-full space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search type tabs */}
+              <div className="flex rounded-lg overflow-hidden border">
+                <Button
+                  type="button"
+                  variant={searchType === "name" ? "default" : "outline"}
+                  className={`rounded-none ${
+                    searchType === "name"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background"
+                  }`}
+                  onClick={() => setSearchType("name")}
+                >
+                  Search by Name
+                </Button>
+                <Button
+                  type="button"
+                  variant={searchType === "serial" ? "default" : "outline"}
+                  className={`rounded-none ${
+                    searchType === "serial"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background"
+                  }`}
+                  onClick={() => setSearchType("serial")}
+                >
+                  Search by Serial Number
+                </Button>
+              </div>
+            </div>
+
+            {/* Search input */}
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="search"
+                  placeholder={
+                    searchType === "name"
+                      ? "Search by customer name..."
+                      : "Search by serial number..."
+                  }
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 min-w-[250px]"
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && searchCertificates(searchQuery)
+                  }
+                />
+                <Button
+                  variant="secondary"
+                  onClick={() => searchCertificates(searchQuery)}
+                >
+                  Search
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </FadeIn>
 
-      <FadeIn delay={200}>
-        <div className="bg-white rounded-md border shadow-sm">
-          {/* Display loading indicator while fetching data */}
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div>
-              {/* Certificates table */}
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Certificate</TableHead>
-                    <TableHead>Recipient</TableHead>
-                    <TableHead>Serial Number</TableHead>
-                    <TableHead>Issue Date</TableHead>
-                    <TableHead>Expiry Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Display message when no certificates are found */}
-                  {certificates.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="text-center py-10 text-gray-500"
-                      >
-                        {hasSearched
-                          ? searchQuery
-                            ? "No certificates found matching your search criteria"
-                            : "Please enter a search term to find certificates"
-                          : "Use the search box above to find certificates"}
-                      </TableCell>
+      {loading ? (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-2">Searching...</span>
+        </div>
+      ) : Object.keys(certificates).length === 0 && hasSearched ? (
+        <div className="text-center py-12 border rounded-lg bg-background">
+          <Search className="h-12 w-12 mx-auto opacity-20 mb-4" />
+          <h3 className="text-lg font-medium mb-2">No certificates found</h3>
+          <p className="text-muted-foreground">
+            {searchType === "name"
+              ? "No certificates found matching this customer name."
+              : "No certificates found with this serial number."}
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Try a different {searchType === "name" ? "name" : "serial number"}{" "}
+            or search method
+          </p>
+        </div>
+      ) : Object.keys(certificates).length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Search className="h-12 w-12 mx-auto opacity-20 mb-2" />
+          <p>Enter a search term to find certificates</p>
+          <p className="text-sm">Search by customer name or serial number</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {Object.entries(certificates).map(([name, certs]) => (
+            <div key={name} className="rounded-lg border bg-card shadow-sm">
+              <div className="p-4 border-b">
+                <h3 className="text-lg font-semibold text-card-foreground">
+                  {name}
+                </h3>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="w-[120px]">Serial Number</TableHead>
+                      <TableHead className="w-[200px]">Method</TableHead>
+                      <TableHead className="w-[120px]">Start Date</TableHead>
+                      <TableHead className="w-[120px]">End Date</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead className="w-[100px] text-right">
+                        Actions
+                      </TableHead>
                     </TableRow>
-                  ) : (
-                    /* Display certificates */
-                    certificates.map((cert) => (
-                      <TableRow key={cert.id} className="hover:bg-gray-50">
+                  </TableHeader>
+                  <TableBody>
+                    {certs.map((cert) => (
+                      <TableRow
+                        key={`${cert.srId}-${cert.method}`}
+                        className="hover:bg-muted/50"
+                      >
+                        <TableCell className="font-medium">
+                          {cert.s_N || "N/A"}
+                        </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Award className="h-5 w-5 text-blue-600" />
-                            <div>
-                              <p className="font-medium">{cert.method}</p>
-                              <p className="text-xs text-gray-500">
-                                {cert.category}
-                              </p>
-                            </div>
+                          <Badge variant="secondary" className="font-normal">
+                            {getServiceMethodLabel(cert.method)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{formatDate(cert.startDate)}</TableCell>
+                        <TableCell>{formatDate(cert.endDate)}</TableCell>
+                        <TableCell className="max-w-[300px]">
+                          <div className="truncate">
+                            {cert.country ? (
+                              <div className="flex flex-col">
+                                {cert.streetAddress && (
+                                  <span className="text-sm truncate">
+                                    {cert.streetAddress}
+                                  </span>
+                                )}
+                                <span className="flex items-center gap-1">
+                                  {cert.state && <span>{cert.state}</span>}
+                                  {cert.state && cert.country && <span>•</span>}
+                                  {cert.country && (
+                                    <span className="font-medium">
+                                      {cert.country}
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            ) : (
+                              getLocationString(cert)
+                            )}
                           </div>
                         </TableCell>
-                        <TableCell>{cert.name}</TableCell>
-                        <TableCell className="font-mono text-sm">
-                          {cert.serialNumber}
-                        </TableCell>
-                        <TableCell>
-                          {formatDateForDisplay(cert.issueDate)}
-                        </TableCell>
-                        <TableCell>
-                          {formatDateForDisplay(cert.expiryDate)}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(cert.status)}</TableCell>
                         <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => handleEditCertificate(cert.id)}
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" size="icon" asChild>
+                              <Link
+                                href={`/admin/certificates/edit/${cert.srId}`}
+                                className="hover:bg-muted"
                               >
-                                <Edit className="h-4 w-4 mr-2" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => handleDeleteCertificate(cert.id)}
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" /> Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                                <EditIcon className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDeleteCertificate(cert.srId)}
+                              className="hover:bg-destructive/90"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
-          )}
+          ))}
         </div>
-      </FadeIn>
+      )}
     </div>
   );
 }

@@ -42,6 +42,11 @@ import { deleteService } from "@/lib/api-services";
 
 // Utils
 import { format } from "date-fns";
+import {
+  ServiceMethod,
+  ServiceMethodOptions,
+  getServiceMethodLabel,
+} from "@/lib/enums";
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -51,14 +56,26 @@ export default function ServicesPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState({});
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
+
+  // Function to group certificates by name
+  const groupCertificatesByName = (certificates) => {
+    const grouped = {};
+    certificates.forEach((cert) => {
+      if (!grouped[cert.name]) {
+        grouped[cert.name] = [];
+      }
+      grouped[cert.name].push(cert);
+    });
+    return grouped;
+  };
 
   // Function to search for services
   const searchServices = async (query) => {
     if (!query.trim()) {
-      setSearchResults([]);
+      setSearchResults({});
       return;
     }
 
@@ -76,9 +93,7 @@ export default function ServicesPage() {
 
       if (nameResponse.ok) {
         const nameData = await nameResponse.json();
-        if (nameData && nameData.$values) {
-          results = [...nameData.$values];
-        }
+        results = Array.isArray(nameData) ? nameData : [];
       }
 
       // If the query contains numbers, also search by serial number
@@ -91,11 +106,11 @@ export default function ServicesPage() {
 
         if (serialResponse.ok) {
           const serialData = await serialResponse.json();
-          if (serialData && serialData.$values) {
+          if (Array.isArray(serialData)) {
             // Add results that aren't already in the results array
-            const existingIds = new Set(results.map((item) => item.id));
-            serialData.$values.forEach((item) => {
-              if (!existingIds.has(item.id)) {
+            const existingIds = new Set(results.map((item) => item.srId));
+            serialData.forEach((item) => {
+              if (!existingIds.has(item.srId)) {
                 results.push(item);
               }
             });
@@ -103,7 +118,9 @@ export default function ServicesPage() {
         }
       }
 
-      setSearchResults(results);
+      // Group results by name
+      const groupedResults = groupCertificatesByName(results);
+      setSearchResults(groupedResults);
     } catch (error) {
       console.error("Error searching services:", error);
       setError("Failed to search services. Please try again.");
@@ -135,7 +152,11 @@ export default function ServicesPage() {
         });
 
         // Remove the deleted service from search results
-        setSearchResults((prev) => prev.filter((service) => service.id !== id));
+        setSearchResults((prev) => {
+          const newResults = { ...prev };
+          delete newResults[id];
+          return newResults;
+        });
       } catch (error) {
         console.error("Error deleting service:", error);
         toast({
@@ -255,9 +276,11 @@ export default function ServicesPage() {
           <CardHeader>
             <CardTitle>Search Results</CardTitle>
             <CardDescription>
-              {searchResults.length === 0
+              {Object.keys(searchResults).length === 0
                 ? "No services found. Try searching for a service above."
-                : `Showing ${searchResults.length} service(s)`}
+                : `Showing certificates for ${
+                    Object.keys(searchResults).length
+                  } person(s)`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -266,7 +289,7 @@ export default function ServicesPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <span className="ml-2">Searching...</span>
               </div>
-            ) : searchResults.length === 0 ? (
+            ) : Object.keys(searchResults).length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Search className="h-12 w-12 mx-auto opacity-20 mb-2" />
                 <p>No services found matching your search criteria</p>
@@ -275,68 +298,72 @@ export default function ServicesPage() {
                 </p>
               </div>
             ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Serial Number</TableHead>
-                      <TableHead>Method</TableHead>
-                      <TableHead>Start Date</TableHead>
-                      <TableHead>End Date</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {searchResults.map((service) => (
-                      <TableRow key={service.id}>
-                        <TableCell className="font-medium">
-                          {service.name}
-                        </TableCell>
-                        <TableCell>{service.s_N || "N/A"}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {getMethodName(service.method)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{formatDate(service.startDate)}</TableCell>
-                        <TableCell>{formatDate(service.endDate)}</TableCell>
-                        <TableCell>
-                          {getLocationString(service.location)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" size="icon" asChild>
-                              <Link
-                                href={`/admin/services/edit?id=${service.id}`}
-                              >
-                                <EditIcon className="h-4 w-4" />
-                              </Link>
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="icon"
-                              onClick={() => handleDeleteService(service.id)}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="space-y-8">
+                {Object.entries(searchResults).map(([name, certificates]) => (
+                  <div key={name} className="rounded-md border p-4">
+                    <h3 className="text-lg font-semibold mb-4">{name}</h3>
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Serial Number</TableHead>
+                            <TableHead>Method</TableHead>
+                            <TableHead>Start Date</TableHead>
+                            <TableHead>End Date</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead className="text-right">
+                              Actions
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {certificates.map((certificate) => (
+                            <TableRow key={certificate.srId}>
+                              <TableCell>{certificate.s_N || "N/A"}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline">
+                                  {getServiceMethodLabel(certificate.method)}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {formatDate(certificate.startDate)}
+                              </TableCell>
+                              <TableCell>
+                                {formatDate(certificate.endDate)}
+                              </TableCell>
+                              <TableCell>
+                                {getLocationString(certificate)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button variant="outline" size="icon" asChild>
+                                    <Link
+                                      href={`/admin/services/edit?id=${certificate.srId}`}
+                                    >
+                                      <EditIcon className="h-4 w-4" />
+                                    </Link>
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={() =>
+                                      handleDeleteService(certificate.srId)
+                                    }
+                                  >
+                                    <TrashIcon className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </CardContent>
-          {searchResults.length > 0 && (
-            <CardFooter className="flex justify-between border-t bg-muted/50 py-4">
-              <div className="text-sm text-muted-foreground">
-                Showing {searchResults.length} service(s)
-              </div>
-            </CardFooter>
-          )}
         </Card>
       </FadeIn>
     </div>

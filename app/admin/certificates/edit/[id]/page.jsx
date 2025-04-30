@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarIcon, Loader2, ChevronLeft } from "lucide-react";
 import { format } from "date-fns";
-import { en } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/animations/fade-in";
-import { updateService } from "@/lib/api-services";
+import { updateService, getServiceById } from "@/lib/api-services";
 
 import React from "react";
 
@@ -53,54 +53,39 @@ export default function EditCertificatePage({ params }) {
     method: "1",
     startDate: "",
     endDate: "",
-    location: {
-      country: "",
-      state: "",
-      streetAddress: "",
-    },
+    country: "",
+    state: "",
+    streetAddress: "",
   });
 
   useEffect(() => {
     const fetchCertificateData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `https://azinternational-eg.com/api/Services/getById?id=${certificateId}`
-        );
+        const certificate = await getServiceById(certificateId);
 
-        if (response.ok) {
-          const certificate = await response.json();
-          console.log("Certificate data fetched:", certificate);
-
-          setFormData({
-            name: certificate.name || "",
-            s_N: certificate.s_N || "",
-            method: certificate.method?.toString() || "1",
-            startDate: certificate.startDate
-              ? new Date(certificate.startDate)
-              : "",
-            endDate: certificate.endDate ? new Date(certificate.endDate) : "",
-            location: {
-              country: certificate.location?.country || "",
-              state: certificate.location?.state || "",
-              streetAddress: certificate.location?.streetAddress || "",
-            },
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: "Certificate not found",
-            variant: "destructive",
-          });
-          router.push("/admin/certificates");
-        }
+        setFormData({
+          name: certificate.name || "",
+          s_N: certificate.s_N || "",
+          method: certificate.method?.toString() || "1",
+          startDate: certificate.startDate
+            ? new Date(certificate.startDate)
+            : "",
+          endDate: certificate.endDate ? new Date(certificate.endDate) : "",
+          country: certificate.country || "",
+          state: certificate.state || "",
+          streetAddress: certificate.streetAddress || "",
+        });
       } catch (error) {
-        console.error("Error fetching certificate data:", error);
         toast({
           title: "Error",
-          description: "An error occurred while fetching certificate data",
+          description:
+            error.message || "Certificate not found or could not be loaded",
           variant: "destructive",
         });
+        setTimeout(() => {
+          router.push("/admin/certificates");
+        }, 3000);
       } finally {
         setIsLoading(false);
       }
@@ -147,14 +132,37 @@ export default function EditCertificatePage({ params }) {
     setIsSaving(true);
 
     try {
+      if (!formData.name || !formData.s_N) {
+        toast({
+          title: "Validation Error",
+          description: "Name and Serial Number are required fields",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      if (
+        formData.startDate &&
+        formData.endDate &&
+        new Date(formData.endDate) < new Date(formData.startDate)
+      ) {
+        toast({
+          title: "Date Error",
+          description: "Expiry date cannot be before issue date",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
+      }
+
       const updatedData = {
-        id: parseInt(certificateId, 10),
-        name: formData.name,
-        s_N: formData.s_N,
-        method: parseInt(formData.method),
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        location: formData.location,
+        ...formData,
+        location: {
+          country: formData.country || "",
+          state: formData.state || "",
+          streetAddress: formData.streetAddress || "",
+        },
       };
 
       await updateService(certificateId, updatedData);
@@ -166,10 +174,11 @@ export default function EditCertificatePage({ params }) {
 
       router.push("/admin/certificates");
     } catch (error) {
-      console.error("Error updating certificate:", error);
       toast({
         title: "Error",
-        description: "An error occurred while updating the certificate",
+        description:
+          error.message ||
+          "An error occurred while updating the certificate. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -285,7 +294,9 @@ export default function EditCertificatePage({ params }) {
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {formData.startDate ? (
-                              format(formData.startDate, "PPP", { locale: en })
+                              format(formData.startDate, "PPP", {
+                                locale: enUS,
+                              })
                             ) : (
                               <span>Select a date</span>
                             )}
@@ -317,7 +328,7 @@ export default function EditCertificatePage({ params }) {
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {formData.endDate ? (
-                              format(formData.endDate, "PPP", { locale: en })
+                              format(formData.endDate, "PPP", { locale: enUS })
                             ) : (
                               <span>Select a date</span>
                             )}
@@ -345,44 +356,42 @@ export default function EditCertificatePage({ params }) {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="location.country">Country</Label>
+                      <Label htmlFor="country">Country</Label>
                       <Input
-                        id="location.country"
-                        name="location.country"
+                        id="country"
+                        name="country"
                         placeholder="Enter country name"
-                        value={formData.location.country}
+                        value={formData.country || ""}
                         onChange={handleInputChange}
                         className="mt-1"
-                        required
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Required for location display
+                      </p>
                     </div>
 
                     <div>
-                      <Label htmlFor="location.state">State</Label>
+                      <Label htmlFor="state">State/City</Label>
                       <Input
-                        id="location.state"
-                        name="location.state"
-                        placeholder="Enter state name"
-                        value={formData.location.state}
+                        id="state"
+                        name="state"
+                        placeholder="Enter state or city name"
+                        value={formData.state || ""}
                         onChange={handleInputChange}
                         className="mt-1"
-                        required
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <Label htmlFor="location.streetAddress">
-                        Street Address
-                      </Label>
+                      <Label htmlFor="streetAddress">Street Address</Label>
                       <Textarea
-                        id="location.streetAddress"
-                        name="location.streetAddress"
-                        placeholder="Enter street address"
-                        value={formData.location.streetAddress}
+                        id="streetAddress"
+                        name="streetAddress"
+                        placeholder="Enter detailed address"
+                        value={formData.streetAddress || ""}
                         onChange={handleInputChange}
                         className="mt-1"
                         rows={3}
-                        required
                       />
                     </div>
                   </div>
