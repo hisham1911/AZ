@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
         // Wait a moment before redirecting to ensure localStorage is updated
         setTimeout(() => {
           // Use window.location instead of router.push to ensure full reload
-          window.location.href = "/admin/certificates";
+          window.location.href = "/adminAZ/certificates";
         }, 100);
       } else {
         toast({

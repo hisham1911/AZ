@@ -1,33 +1,33 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/components/ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 // Admin components
-import { FileCheck, LogOut, FileText } from "lucide-react"
-import Link from "next/link"
+import { FileCheck, LogOut, FileText } from "lucide-react";
+import Link from "next/link";
 
 // Admin sidebar component
 function AdminSidebar() {
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("adminAuthenticated")
+    localStorage.removeItem("adminAuthenticated");
     // Using window.location instead of router.push for a full reload
-    window.location.href = "/admin/login"
-  }
+    window.location.href = "/adminAZ/login";
+  };
 
   const menuItems = [
-    { 
-      name: "Certificates", 
-      href: "/admin/certificates", 
-      icon: <FileText className="h-5 w-5" /> 
-    }
-  ]
+    {
+      name: "Certificates",
+      href: "/adminAZ/certificates",
+      icon: <FileText className="h-5 w-5" />,
+    },
+  ];
 
   return (
     <div className="hidden border-r bg-gray-50/40 md:block md:w-64">
@@ -38,21 +38,22 @@ function AdminSidebar() {
         <nav className="flex-1 overflow-auto py-4">
           <ul className="space-y-1 px-2">
             {menuItems.map((item) => {
-              const isActive = pathname.includes(item.href)
+              const isActive = pathname.includes(item.href);
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`flex items-center rounded-md px-3 py-2 text-sm ${isActive 
-                      ? "bg-blue-100 text-blue-600" 
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    className={`flex items-center rounded-md px-3 py-2 text-sm ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
                     {item.icon}
                     <span className="ml-3">{item.name}</span>
                   </Link>
                 </li>
-              )
+              );
             })}
             <li className="mt-8">
               <button
@@ -67,7 +68,7 @@ function AdminSidebar() {
         </nav>
       </div>
     </div>
-  )
+  );
 }
 
 // Header component
@@ -78,37 +79,37 @@ function AdminHeader() {
         <h1 className="text-lg font-semibold">Admin Dashboard</h1>
       </div>
     </header>
-  )
+  );
 }
 
 export default function AdminLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const pathname = usePathname()
-  const router = useRouter()
-  const { toast } = useToast()
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { toast } = useToast();
 
   // Check authentication status
   useEffect(() => {
     const checkAuth = async () => {
       // Simulate verification delay
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Check for login data in localStorage
-      const isAdmin = localStorage.getItem("adminAuthenticated") === "true"
-      setIsAuthenticated(isAdmin)
-      setIsLoading(false)
-    }
+      const isAdmin = localStorage.getItem("adminAuthenticated") === "true";
+      setIsAuthenticated(isAdmin);
+      setIsLoading(false);
+    };
 
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, []);
 
   // Redirect to login page if not authenticated
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && pathname !== "/admin/login") {
-      router.push("/admin/login")
+    if (!isLoading && !isAuthenticated && pathname !== "/adminAZ/login") {
+      router.push("/adminAZ/login");
     }
-  }, [isLoading, isAuthenticated, pathname, router])
+  }, [isLoading, isAuthenticated, pathname, router]);
 
   // Loading state
   if (isLoading) {
@@ -117,16 +118,16 @@ export default function AdminLayout({ children }) {
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         <span className="ml-2 text-lg">Loading admin panel...</span>
       </div>
-    )
+    );
   }
 
   // If on the login page
-  if (pathname === "/admin/login") {
-    return children
+  if (pathname === "/adminAZ/login") {
+    return children;
   }
-  
+
   // If not authenticated and not on login page
-  if (!isAuthenticated && pathname !== "/admin/login") {
+  if (!isAuthenticated && pathname !== "/adminAZ/login") {
     return null; // Will be redirected by useEffect
   }
 
@@ -140,5 +141,5 @@ export default function AdminLayout({ children }) {
       </div>
       <Toaster />
     </div>
-  )
+  );
 }

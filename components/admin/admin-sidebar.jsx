@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Award,
@@ -15,74 +15,83 @@ import {
   BarChart3,
   Bell,
   MessageSquare,
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function AdminSidebar() {
-  const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed)
-  }
+    setCollapsed(!collapsed);
+  };
 
   const navItems = [
     {
       title: "Dashboard",
-      href: "/admin",
+      href: "/adminAZ",
       icon: LayoutDashboard,
     },
     {
       title: "Certificates",
-      href: "/admin/certificates",
+      href: "/adminAZ/certificates",
       icon: Award,
     },
     {
       title: "Templates",
-      href: "/admin/templates",
+      href: "/adminAZ/templates",
       icon: FileText,
     },
     {
       title: "Users",
-      href: "/admin/users",
+      href: "/adminAZ/users",
       icon: Users,
     },
     {
       title: "Chats",
-      href: "/admin/chats",
+      href: "/adminAZ/chats",
       icon: MessageSquare,
     },
     {
       title: "Analytics",
-      href: "/admin/analytics",
+      href: "/adminAZ/analytics",
       icon: BarChart3,
     },
     {
       title: "Notifications",
-      href: "/admin/notifications",
+      href: "/adminAZ/notifications",
       icon: Bell,
     },
     {
       title: "Settings",
-      href: "/admin/settings",
+      href: "/adminAZ/settings",
       icon: Settings,
     },
-  ]
+  ];
 
   return (
     <div
       className={cn(
         "bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300",
-        collapsed ? "w-16" : "w-64",
+        collapsed ? "w-16" : "w-64"
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-        <Link href="/admin" className="flex items-center">
-          {!collapsed && <span className="text-xl font-bold text-blue-600">AZ Admin</span>}
-          {collapsed && <span className="text-xl font-bold text-blue-600">AZ</span>}
+        <Link href="/adminAZ" className="flex items-center">
+          {!collapsed && (
+            <span className="text-xl font-bold text-blue-600">AZ Admin</span>
+          )}
+          {collapsed && (
+            <span className="text-xl font-bold text-blue-600">AZ</span>
+          )}
         </Link>
-        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-8 w-8 text-gray-500">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="h-8 w-8 text-gray-500"
+        >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </Button>
       </div>
@@ -95,11 +104,15 @@ export function AdminSidebar() {
               href={item.href}
               className={cn(
                 "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
-                pathname === item.href ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-100",
-                collapsed ? "justify-center" : "justify-start",
+                pathname === item.href
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-600 hover:bg-gray-100",
+                collapsed ? "justify-center" : "justify-start"
               )}
             >
-              <item.icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-3")} />
+              <item.icon
+                className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-3")}
+              />
               {!collapsed && <span>{item.title}</span>}
             </Link>
           ))}
@@ -109,12 +122,15 @@ export function AdminSidebar() {
       <div className="p-4 border-t border-gray-200">
         <Button
           variant="ghost"
-          className={cn("w-full text-gray-600 hover:bg-gray-100 justify-start", collapsed && "justify-center")}
+          className={cn(
+            "w-full text-gray-600 hover:bg-gray-100 justify-start",
+            collapsed && "justify-center"
+          )}
         >
           <LogOut className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} />
           {!collapsed && <span>Logout</span>}
         </Button>
       </div>
     </div>
-  )
+  );
 }
