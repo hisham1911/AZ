@@ -7,6 +7,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // تسريع المجمع المعتمد على Rust
+  swcMinify: true,
 
   // تحسين الصور
   images: {
@@ -21,8 +23,6 @@ const nextConfig = {
     optimizeCss: false,
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
     webVitalsAttribution: ["CLS", "LCP", "FID", "INP"], // تتبع جميع مصادر مشاكل الأداء
-    // تسريع المجمع المعتمد على Rust
-    swcMinify: true,
   },
 
   // تحسين معالجة المكونات الخارجية
