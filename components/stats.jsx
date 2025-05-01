@@ -1,7 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, Award, Building, Clock } from "lucide-react"
-import { CountUp } from "@/components/animations/count-up"
-import { FadeIn } from "@/components/animations/fade-in"
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, Award, Building, Clock } from "lucide-react";
+import { CountUp } from "@/components/animations/count-up";
+import { FadeIn } from "@/components/animations/fade-in";
 
 export default function Stats() {
   const stats = [
@@ -25,17 +25,19 @@ export default function Stats() {
     },
     {
       icon: <Award className="h-10 w-10 text-blue-600" />,
-      value: 25,
+      value: 9000,
       label: "Industry Certifications",
       suffix: "+",
     },
-  ]
+  ];
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <FadeIn>
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Our Achievements</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+            Our Achievements
+          </h2>
         </FadeIn>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -47,7 +49,11 @@ export default function Stats() {
                     {stat.icon}
                   </div>
                   <h3 className="text-4xl font-bold mb-2 text-gray-800">
-                    <CountUp end={stat.value} prefix={stat.prefix || ""} suffix={stat.suffix || ""} />
+                    <CountUp
+                      end={stat.value}
+                      prefix={stat.prefix || ""}
+                      suffix={stat.suffix || ""}
+                    />
                   </h3>
                   <p className="text-gray-600">{stat.label}</p>
                 </CardContent>
@@ -57,5 +63,5 @@ export default function Stats() {
         </div>
       </div>
     </section>
-  )
+  );
 }

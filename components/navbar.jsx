@@ -93,7 +93,7 @@ export default function Navbar() {
                   link.name === "Services" ? (
                     <NavigationMenuItem key={link.name}>
                       <NavigationMenuTrigger
-                        className={`text-sm font-medium transition-all duration-300 hover:text-blue-600 relative ${
+                        className={`text-sm font-medium transition-all duration-300 hover:text-blue-600 relative px-0 ${
                           currentPath === link.href
                             ? "text-blue-600"
                             : "text-gray-600"
