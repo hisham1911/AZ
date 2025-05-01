@@ -144,7 +144,7 @@ export default function CertificatesPage() {
    * Navigate to create certificate page
    */
   const handleCreateCertificate = () => {
-    router.push("/admin/certificates/create");
+    router.push("/adminAZ/certificates/create");
   };
 
   /**
@@ -152,7 +152,7 @@ export default function CertificatesPage() {
    * @param {string} id - Certificate ID
    */
   const handleEditCertificate = (id) => {
-    router.push(`/admin/certificates/edit/${id}`);
+    router.push(`/adminAZ/certificates/edit/${id}`);
   };
 
   /**
@@ -466,7 +466,7 @@ export default function CertificatesPage() {
                           <div className="flex justify-end gap-2">
                             <Button variant="outline" size="icon" asChild>
                               <Link
-                                href={`/admin/certificates/edit/${cert.srId}`}
+                                href={`/adminAZ/certificates/edit/${cert.srId}`}
                                 className="hover:bg-muted"
                               >
                                 <EditIcon className="h-4 w-4" />

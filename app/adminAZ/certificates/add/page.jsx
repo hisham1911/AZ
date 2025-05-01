@@ -129,7 +129,7 @@ export default function AddCertificatePage() {
         description: "Certificate has been successfully created",
       });
 
-      router.push("/admin/certificates");
+      router.push("/adminAZ/certificates");
     } catch (error) {
       // Show error message without logging to console
       toast({
@@ -347,7 +347,7 @@ export default function AddCertificatePage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/admin/certificates")}
+                onClick={() => router.push("/adminAZ/certificates")}
               >
                 Cancel
               </Button>

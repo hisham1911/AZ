@@ -84,7 +84,7 @@ export default function EditCertificatePage({ params }) {
           variant: "destructive",
         });
         setTimeout(() => {
-          router.push("/admin/certificates");
+          router.push("/adminAZ/certificates");
         }, 3000);
       } finally {
         setIsLoading(false);
@@ -172,7 +172,7 @@ export default function EditCertificatePage({ params }) {
         description: "Certificate has been successfully updated",
       });
 
-      router.push("/admin/certificates");
+      router.push("/adminAZ/certificates");
     } catch (error) {
       toast({
         title: "Error",
@@ -402,7 +402,7 @@ export default function EditCertificatePage({ params }) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push("/admin/certificates")}
+                  onClick={() => router.push("/adminAZ/certificates")}
                 >
                   Cancel
                 </Button>

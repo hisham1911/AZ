@@ -1,2 +1,2 @@
 // Redirect to certificates page
-window.location.href = "/admin/certificates";
+window.location.href = "/adminAZ/certificates";

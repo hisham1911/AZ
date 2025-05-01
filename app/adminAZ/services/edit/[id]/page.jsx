@@ -95,7 +95,7 @@ export default function EditServicePage({ params }) {
             description: "لم يتم العثور على الخدمة",
             variant: "destructive",
           });
-          router.push("/admin/services");
+          router.push("/adminAZ/services");
         }
       } catch (error) {
         console.error("خطأ في جلب بيانات الخدمة:", error);
@@ -181,7 +181,7 @@ export default function EditServicePage({ params }) {
           description: "تم تحديث الخدمة بنجاح",
           variant: "success",
         });
-        router.push("/admin/services");
+        router.push("/adminAZ/services");
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "فشل في تحديث الخدمة");
@@ -372,7 +372,7 @@ export default function EditServicePage({ params }) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push("/admin/services")}
+                  onClick={() => router.push("/adminAZ/services")}
                 >
                   إلغاء
                 </Button>

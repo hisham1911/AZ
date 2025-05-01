@@ -209,7 +209,7 @@ export default function ServicesPage() {
             </p>
           </div>
           <Button asChild>
-            <Link href="/admin/services/add">
+            <Link href="/adminAZ/services/add">
               <PlusIcon className="mr-2 h-4 w-4" />
               Add New Service
             </Link>
@@ -338,7 +338,7 @@ export default function ServicesPage() {
                                 <div className="flex justify-end gap-2">
                                   <Button variant="outline" size="icon" asChild>
                                     <Link
-                                      href={`/admin/services/edit?id=${certificate.srId}`}
+                                      href={`/adminAZ/services/edit?id=${certificate.srId}`}
                                     >
                                       <EditIcon className="h-4 w-4" />
                                     </Link>
