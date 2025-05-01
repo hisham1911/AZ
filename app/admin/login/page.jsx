@@ -119,11 +119,6 @@ export default function AdminLoginPage() {
                   </Button>
                 </div>
               </div>
-              <div className="pt-2 text-center text-sm text-muted-foreground">
-                <p>
-                  Note: Please use email hisham@gmail.com and password Admin123@
-                </p>
-              </div>
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full" disabled={isLoading}>

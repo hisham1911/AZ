@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FadeIn } from "@/components/animations/fade-in";
 import { RevealText } from "@/components/animations/reveal-text";
-import { WaveAnimation } from "@/components/animations/wave_animation";
+import { WaveAnimation } from "@/components/animations/wave-animation";
 
 export default function Hero() {
   return (
