@@ -4,113 +4,72 @@ import Image from "next/image"
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-gradient-to-b from-gray-900 via-blue-950 to-blue-900 text-white shadow-lg">
+      <div className="container mx-auto px-4 md:px-6">
+        {/* Top section with main content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-5 md:py-8">
           {/* Company Info */}
-          <div>
-            <div className="flex items-center mb-4">
-              <div className="relative h-10 w-10 mr-2">
-                <Image src="/images/az-logo.png" alt="AZ International Logo" width={40} height={40} />
+          <div className="flex flex-col">
+            <div className="flex items-center mb-3 group">
+              <div className="relative mr-3">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/30 to-blue-400/30 blur-sm rounded-full opacity-75 group-hover:opacity-100 transition-all duration-500"></div>
+                <div className="relative h-9 w-9 md:h-11 md:w-11 bg-blue-900 rounded-full p-1 flex items-center justify-center ring-1 ring-white/10">
+                  <Image 
+                    src="/images/az-logo.png" 
+                    alt="AZ International Logo" 
+                    width={40} 
+                    height={40}
+                    className="object-contain group-hover:scale-110 transition-transform duration-300"
+                    priority
+                  />
+                </div>
               </div>
-              <h3 className="text-xl font-bold">AZ INTERNATIONAL</h3>
+              <div>
+                <h3 className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-sky-200 group-hover:from-blue-200 group-hover:to-sky-100 transition-all duration-300">
+                  AZ INTERNATIONAL
+                </h3>
+                <span className="text-[10px] text-blue-300/80 uppercase tracking-wider">Engineering & Technical Consulting</span>
+              </div>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-300/90 mb-3 text-xs leading-relaxed max-w-md">
               Engineering & Technical Consulting since 2012, specializing in inspection, quality control, and technical
-              training services.
+              training services. We provide high-quality engineering solutions to clients across various industries.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <Instagram className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-gray-300 hover:text-white">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-300 hover:text-white">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="text-gray-300 hover:text-white">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/certificates" className="text-gray-300 hover:text-white">
-                  Certificates
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Our Services</h3>
-            <ul className="space-y-2">
-              <li className="text-gray-300 hover:text-white">
-                <Link href="/services">Non-Destructive Testing</Link>
-              </li>
-              <li className="text-gray-300 hover:text-white">
-                <Link href="/services">Quality Control</Link>
-              </li>
-              <li className="text-gray-300 hover:text-white">
-                <Link href="/services">Welding Inspection</Link>
-              </li>
-              <li className="text-gray-300 hover:text-white">
-                <Link href="/services">Technical Training</Link>
-              </li>
-              <li className="text-gray-300 hover:text-white">
-                <Link href="/services">Rope Access Inspection</Link>
-              </li>
-            </ul>
           </div>
 
           {/* Contact Info */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Contact Us</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <MapPin className="h-5 w-5 mr-2 mt-0.5 text-blue-400" />
-                <span className="text-gray-300">33 Gamal El-Deen Kassem St., Nasr City, Cairo, Egypt</span>
+          <div className="flex flex-col md:items-end">
+            <h4 className="font-semibold text-xs uppercase tracking-wider text-blue-200 mb-3 relative inline-block">
+              Contact Us
+              <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-gradient-to-r from-blue-500/80 to-transparent rounded-full"></span>
+            </h4>
+            <ul className="space-y-3 text-xs">
+              <li className="flex items-start group">
+                <div className="bg-blue-800/30 p-1.5 rounded-full mr-2.5 group-hover:bg-blue-700/50 transition-all duration-300">
+                  <MapPin className="h-3 w-3 text-blue-300 flex-shrink-0" />
+                </div>
+                <span className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300">33 Gamal El-Deen Kassem St., Nasr City, Cairo, Egypt</span>
               </li>
-              <li className="flex items-center">
-                <Phone className="h-5 w-5 mr-2 text-blue-400" />
-                <span className="text-gray-300">(+202) 22879691</span>
+              <li className="flex items-center group">
+                <div className="bg-blue-800/30 p-1.5 rounded-full mr-2.5 group-hover:bg-blue-700/50 transition-all duration-300">
+                  <Phone className="h-3 w-3 text-blue-300 flex-shrink-0" />
+                </div>
+                <a href="tel:+20222879691" className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300">(+202) 22879691</a>
               </li>
-              <li className="flex items-center">
-                <Mail className="h-5 w-5 mr-2 text-blue-400" />
-                <span className="text-gray-300">az.qualitycontrol@gmail.com</span>
+              <li className="flex items-center group">
+                <div className="bg-blue-800/30 p-1.5 rounded-full mr-2.5 group-hover:bg-blue-700/50 transition-all duration-300">
+                  <Mail className="h-3 w-3 text-blue-300 flex-shrink-0" />
+                </div>
+                <a href="mailto:az.qualitycontrol@gmail.com" className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300">az.qualitycontrol@gmail.com</a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-6 text-center text-gray-400">
-          <p>© {new Date().getFullYear()} AZ INTERNATIONAL. All rights reserved.</p>
+        {/* Bottom copyright bar */}
+        <div className="border-t border-blue-800/30 py-3 text-center text-blue-200/70 text-[11px] relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-900/10 to-transparent animate-shimmer pointer-events-none"></div>
+          <p>© {new Date().getFullYear()} AZ INTERNATIONAL. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

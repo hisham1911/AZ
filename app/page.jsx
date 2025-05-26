@@ -7,8 +7,8 @@ import Services from "@/components/services";
 
 // Lazy load non-critical components
 const Stats = lazy(() => import("@/components/stats"));
+const Engineers = lazy(() => import("@/components/engineers"));
 const Clients = lazy(() => import("@/components/clients"));
-const CTA = lazy(() => import("@/components/cta"));
 const ScrollProgress = lazy(() =>
   import("@/components/animations/scroll-progress").then((mod) => ({
     default: mod.ScrollProgress,
@@ -29,15 +29,15 @@ export default function Home() {
         <ScrollProgress />
       </Suspense>
       <Hero />
-      <Services />
+      <Services />{" "}
       <Suspense fallback={<SimpleLoading />}>
         <Stats />
       </Suspense>
       <Suspense fallback={<SimpleLoading />}>
-        <Clients />
-      </Suspense>
+        <Engineers />
+      </Suspense>{" "}
       <Suspense fallback={<SimpleLoading />}>
-        <CTA />
+        <Clients />
       </Suspense>
     </div>
   );

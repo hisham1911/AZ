@@ -38,26 +38,7 @@ export default function Hero() {
             </p>
           </FadeIn>
 
-          <FadeIn delay={800} duration={800}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Link href="/services">Explore Our Services</Link>
-              </Button>
 
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10"
-              >
-                <Link href="/contact">Contact Us</Link>
-              </Button>
-            </div>
-          </FadeIn>
         </div>
       </div>
 

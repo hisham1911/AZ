@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import WhatsAppButton from "@/components/whatsapp-button";
 import { Suspense } from "react";
 import Loading from "./loading";
 import SpinnerLoader from "./components/spinner-loader";
@@ -55,6 +56,8 @@ export default function RootLayout({ children }) {
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
           <Footer />
+          {/* Floating WhatsApp Button */}
+          <WhatsAppButton />
         </div>
       </body>
     </html>

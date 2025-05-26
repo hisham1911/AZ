@@ -7,9 +7,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // تسريع المجمع المعتمد على Rust
-  swcMinify: true,
-
   // تحسين الصور
   images: {
     unoptimized: true, // يمكن تعديله إلى false في الإنتاج لتحسين الأداء
@@ -34,7 +31,7 @@ const nextConfig = {
   },
 
   // تحسين التحميل
-  reactStrictMode: false, // يمكن تعطيله مؤقتاً لتحسين الأداء في التطوير
+  reactStrictMode: true, // يمكن تعطيله مؤقتاً لتحسين الأداء في التطوير
 
   // تسريع التحميل
   compress: true, // تفعيل الضغط (الافتراضي هو true لكن للتأكيد)

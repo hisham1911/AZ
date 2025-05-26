@@ -24,25 +24,7 @@ export default function CTA() {
           </p>
         </FadeIn>
 
-        <FadeIn delay={400}>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600 transition-colors duration-300"
-            >
-              <Link href="/contact">Contact Us</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 transition-colors duration-300"
-            >
-              <Link href="/services">Explore Services</Link>
-            </Button>
-          </div>
-        </FadeIn>
+
       </div>
     </section>
   )

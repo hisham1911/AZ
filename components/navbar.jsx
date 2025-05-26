@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Facebook, Twitter, Linkedin, Instagram, Mail, Phone } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import {
@@ -22,10 +22,38 @@ export default function Navbar() {
   const currentPath = usePathname();
   const navMenuRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [topBarVisible, setTopBarVisible] = useState(true);
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/services" },
+    { 
+      name: "Services", 
+      href: "/services",
+      submenu: [
+        {
+          title: "Quality Assurance & Controls",
+          href: "#quality",
+          items: [
+            "Ultrasonic Testing (UT)",
+            "Magnetic Particle Testing (MT)",
+            "Dye Penetrant Testing (PT)",
+            "Radiographic Testing (RT)",
+            "Visual Testing (VT)"
+          ]
+        },
+        {
+          title: "Specialized Services",
+          href: "#specialized",
+          items: [
+            "Third Party Inspection",
+            "Vendor Inspection",
+            "Expediting Services",
+            "Technical Consulting"
+          ]
+        }
+      ]
+    },
+    { name: "Clients", href: "/clients" },
     { name: "Certificates", href: "/certificates" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
@@ -48,235 +76,249 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Handle scroll effect for main navigation
+  useEffect(() => {
+    const handleResize = () => {
+      // Fix any mobile menu issues on resize
+      if (window.innerWidth >= 768 && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMenuOpen]);
+
+  const handleServiceLinkClick = (e, href) => {
+    if (currentPath === "/services") {
+      e.preventDefault();
+      window.location.hash = href;
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+      document.activeElement.blur();
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  };
+
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
         scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-white"
       }`}
     >
+      {/* Top bar with social media links - always visible */}
+      <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white backdrop-blur-sm shadow-sm">
+        <div className="container mx-auto px-4 py-1.5">
+          <div className="flex justify-between items-center">
+            {/* Contact info - hidden on small screens, flex on medium and up */}
+            <div className="text-xs hidden sm:flex items-center space-x-4">
+              <a href="tel:+20222879691" className="flex items-center hover:text-blue-200 transition-all duration-300 group">
+                <div className="bg-blue-700/30 rounded-full p-1 mr-2 group-hover:bg-blue-600/50 transition-all duration-300">
+                  <Phone className="h-3 w-3" />
+                </div>
+                <span className="whitespace-nowrap">(+202) 22879691</span>
+              </a>
+              <a href="mailto:az.qualitycontrol@gmail.com" className="hidden md:flex items-center hover:text-blue-200 transition-all duration-300 group">
+                <div className="bg-blue-700/30 rounded-full p-1 mr-2 group-hover:bg-blue-600/50 transition-all duration-300">
+                  <Mail className="h-3 w-3" />
+                </div>
+                <span className="whitespace-nowrap">az.qualitycontrol@gmail.com</span>
+              </a>
+            </div>
+            {/* Social icons - centered on mobile, right-aligned on desktop */}
+            <div className="flex space-x-3 mx-auto sm:mx-0">
+              <a href="#" aria-label="Facebook" className="group p-1 relative overflow-hidden">
+                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 rounded-full scale-0 group-hover:scale-100 transition-all duration-300 group-hover:animate-ping-once"></div>
+                <Facebook className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
+              </a>
+              <a href="#" aria-label="Twitter" className="group p-1 relative">
+                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
+                <Twitter className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
+              </a>
+              <a href="#" aria-label="LinkedIn" className="group p-1 relative">
+                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
+                <Linkedin className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
+              </a>
+              <a href="#" aria-label="Instagram" className="group p-1 relative">
+                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
+                <Instagram className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="container mx-auto px-4">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 items-center justify-between relative">
+          {/* Decorative element - hidden on small screens */}
+          <div className="absolute right-0 bottom-0 w-64 h-16 bg-gradient-to-l from-blue-100/10 to-transparent rounded-tl-full pointer-events-none opacity-60 hidden md:block"></div>
+          
+          {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div
-                className="relative h-18 w-18"
-                style={{
-                  height: "72px",
-                  width: "72px",
-                  minWidth: "72px",
-                  minHeight: "72px",
-                  overflow: "hidden",
-                }}
-              >
-                <Image
-                  src="/images/az-logo.png"
-                  alt="AZ International Logo"
-                  width={72}
-                  height={72}
-                  className="transition-transform duration-300 group-hover:scale-110"
-                />
+            <Link href="/" className="flex items-center group relative">
+              <div className="relative flex items-center">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur-sm opacity-70 group-hover:opacity-100 transition duration-500"></div>
+                <div
+                  className="relative bg-white rounded-full p-1 ring-1 ring-gray-200 overflow-hidden"
+                  style={{
+                    height: "52px",
+                    width: "52px",
+                  }}
+                >
+                  <Image
+                    src="/images/az-logo.png"
+                    alt="AZ International Logo"
+                    width={50}
+                    height={50}
+                    className="transition-all duration-300 group-hover:scale-110"
+                  />
+                </div>
               </div>
-              <span className="hidden md:inline-block font-semibold text-lg text-blue-700 tracking-widest">
-                AZ <span className="text-gray-800">INTERNATIONAL</span>
-              </span>
+              <div className="flex flex-col ml-3">
+                <span className="text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent transition-all duration-500 group-hover:from-blue-600 group-hover:to-sky-400">
+                  AZ International
+                </span>
+                <span className="text-xs text-gray-500 transition-all duration-500 group-hover:text-blue-600">
+                  Engineering & Inspection
+                </span>
+              </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="flex-1 flex justify-center">
-            <NavigationMenu
-              ref={navMenuRef}
-              onValueChange={() => setDropdownOpen(false)}
-            >
-              <NavigationMenuList className="items-center space-x-6">
-                {navLinks.map((link) =>
-                  link.name === "Services" ? (
-                    <NavigationMenuItem key={link.name}>
-                      <NavigationMenuTrigger
-                        className={`text-sm font-medium transition-all duration-300 hover:text-blue-600 relative px-0 ${
-                          currentPath === link.href
-                            ? "text-blue-600"
-                            : "text-gray-600"
+          <div className="hidden md:flex items-center flex-1 justify-center">
+            <NavigationMenu>
+              <NavigationMenuList className="space-x-2">
+                {navLinks.map((link) => (
+                  <NavigationMenuItem key={link.name}>
+                    {link.submenu ? (
+                      <>
+                        <NavigationMenuTrigger className="text-sm font-medium hover:text-blue-600 data-[state=open]:text-blue-600">
+                          {link.name}
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent className="p-6 min-w-[500px] bg-white border rounded-xl shadow-2xl">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {link.submenu.map((section) => (
+                              <div key={section.title}>
+                                <Link
+                                  href={`/services${section.href}`}
+                                  className="font-bold text-blue-800 hover:underline block mb-2"
+                                  onClick={(e) => handleServiceLinkClick(e, section.href)}
+                                >
+                                  {section.title}
+                                </Link>
+                                <ul className="space-y-2 text-sm text-gray-700">
+                                  {section.items.map((item) => (
+                                    <li key={item} className="pl-4 border-l-2 border-gray-200">
+                                      {item}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        </NavigationMenuContent>
+                      </>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className={`text-sm font-medium hover:text-blue-600 px-3 py-2 rounded-md ${
+                          currentPath === link.href ? 'text-blue-600' : 'text-gray-700'
                         }`}
                       >
                         {link.name}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent className="p-6 min-w-[500px] bg-white border rounded-xl shadow-2xl">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <Link
-                              href="/services#quality"
-                              className="font-bold text-blue-800 mb-2 hover:underline block"
-                              onClick={(e) => {
-                                if (currentPath === "/services") {
-                                  e.preventDefault();
-                                  const hash = "#quality";
-                                  window.location.hash = hash;
-                                  window.dispatchEvent(
-                                    new HashChangeEvent("hashchange")
-                                  );
-                                  document.activeElement.blur();
-                                  window.scrollTo({ top: 0, behavior: "auto" });
-                                }
-                              }}
-                            >
-                              Quality Assurance & Controls
-                            </Link>
-                            <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                              <li>Ultrasonic Testing (UT)</li>
-                              <li>Magnetic Particle Testing (MT)</li>
-                              <li>Dye Penetrant Testing (PT)</li>
-                              <li>Visual Inspection (VT)</li>
-                              <li>Welders' inspection & qualification</li>
-                            </ul>
-                          </div>
-                          <div>
-                            <Link
-                              href="/services#training"
-                              className="font-bold text-blue-800 mb-2 hover:underline block"
-                              onClick={(e) => {
-                                if (currentPath === "/services") {
-                                  e.preventDefault();
-                                  const hash = "#training";
-                                  window.location.hash = hash;
-                                  window.dispatchEvent(
-                                    new HashChangeEvent("hashchange")
-                                  );
-                                  document.activeElement.blur();
-                                  window.scrollTo({ top: 0, behavior: "auto" });
-                                }
-                              }}
-                            >
-                              Technical Training Services
-                            </Link>
-                            <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                              <li>Customized technical training</li>
-                              <li>Lectures & group discussions</li>
-                              <li>Practical exercises</li>
-                              <li>Requalification in NDT</li>
-                            </ul>
-                          </div>
-                          <div>
-                            <Link
-                              href="/services#field"
-                              className="font-bold text-blue-800 mb-2 hover:underline block"
-                              onClick={(e) => {
-                                if (currentPath === "/services") {
-                                  e.preventDefault();
-                                  const hash = "#field";
-                                  window.location.hash = hash;
-                                  window.dispatchEvent(
-                                    new HashChangeEvent("hashchange")
-                                  );
-                                  document.activeElement.blur();
-                                  window.scrollTo({ top: 0, behavior: "auto" });
-                                }
-                              }}
-                            >
-                              Field/Industrial Inspection
-                            </Link>
-                            <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                              <li>Pipeline welding inspection</li>
-                              <li>Wall thickness measurement</li>
-                              <li>Equipment inspection</li>
-                              <li>Pipe mill surveillance</li>
-                            </ul>
-                          </div>
-                          <div>
-                            <Link
-                              href="/services#specialized"
-                              className="font-bold text-blue-800 mb-2 hover:underline block"
-                              onClick={(e) => {
-                                if (currentPath === "/services") {
-                                  e.preventDefault();
-                                  const hash = "#specialized";
-                                  window.location.hash = hash;
-                                  window.dispatchEvent(
-                                    new HashChangeEvent("hashchange")
-                                  );
-                                  document.activeElement.blur();
-                                  window.scrollTo({ top: 0, behavior: "auto" });
-                                }
-                              }}
-                            >
-                              Specialized Services
-                            </Link>
-                            <ul className="space-y-1 text-sm text-gray-700 list-disc pl-5">
-                              <li>Rope Access Inspection</li>
-                              <li>Tank integrity inspections</li>
-                              <li>Mechanical testing</li>
-                              <li>Vendor inspection</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  ) : (
-                    <NavigationMenuItem key={link.name}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className={`text-sm font-medium transition-all duration-300 hover:text-blue-600 relative ${
-                            currentPath === link.href
-                              ? "text-blue-600"
-                              : "text-gray-600"
-                          }`}
-                        >
-                          {link.name}
-                          {currentPath === link.href && (
-                            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600 rounded-full"></span>
-                          )}
-                        </Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  )
-                )}
+                      </Link>
+                    )}
+                  </NavigationMenuItem>
+                ))}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
 
-          {/* Balancer for centering */}
-          <div className="hidden md:block" style={{ width: "120px" }}></div>
-
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <div className="md:hidden">
-            <Button variant="ghost" size="icon" onClick={toggleMenu}>
+            <button
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              aria-expanded={isMenuOpen}
+            >
+              <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
-                <X className="h-6 w-6" />
+                <X className="block h-6 w-6" aria-hidden="true" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="block h-6 w-6" aria-hidden="true" />
               )}
-            </Button>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t">
-          <div className="container mx-auto px-4 py-3">
-            <nav className="flex flex-col space-y-3">
-              {navLinks.map((link, index) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`py-2 text-sm font-medium transition-colors hover:text-blue-600 ${
-                    currentPath === link.href
-                      ? "text-blue-600"
-                      : "text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    opacity: 1,
-                    transform: "translateY(0)",
-                    transition: "opacity 300ms, transform 300ms",
-                    transitionDelay: `${index * 50}ms`,
-                  }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
+        <div className="md:hidden bg-white border-t">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navLinks.map((link) => (
+              <div key={link.name} className="px-3 py-2">
+                {link.submenu ? (
+                  <div>
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="w-full flex justify-between items-center text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      {link.name}
+                      <svg
+                        className={`ml-2 h-5 w-5 transform transition-transform ${
+                          dropdownOpen ? 'rotate-180' : ''
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    {dropdownOpen && (
+                      <div className="mt-2 pl-4 space-y-2">
+                        {link.submenu.map((section) => (
+                          <div key={section.title}>
+                            <button
+                              onClick={() => {
+                                router.push(`/services${section.href}`);
+                                setIsMenuOpen(false);
+                              }}
+                              className="block w-full text-left text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
+                            >
+                              {section.title}
+                            </button>
+                            <ul className="pl-4 mt-1 space-y-1">
+                              {section.items.map((item) => (
+                                <li key={item} className="text-sm text-gray-500 hover:text-gray-700 pl-2 py-1">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                      currentPath === link.href
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
