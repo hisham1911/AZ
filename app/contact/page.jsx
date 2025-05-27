@@ -187,15 +187,25 @@ export default function ContactPage() {
                     <Phone className="w-6 h-6 text-blue-600 mt-1" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
-                      <p className="text-gray-600">(+202) 22879691</p>
+                      <p className="text-gray-600">(02) 22-8-79-691</p>
                     </div>
-                  </div>
-                  <div className="flex items-start space-x-4">
+                  </div>                  <div className="flex items-start space-x-4">
                     <Mail className="w-6 h-6 text-blue-600 mt-1" />
                     <div>
                       <h3 className="font-medium">Email</h3>
                       <p className="text-gray-600">
                         az.qualitycontrol@gmail.com
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-6 h-6 text-blue-600 mt-1 flex items-center justify-center">
+                      🌐
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Website</h3>
+                      <p className="text-gray-600">
+                        www.azinternational-eg.com
                       </p>
                     </div>
                   </div>

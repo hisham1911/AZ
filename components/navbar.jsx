@@ -32,24 +32,23 @@ export default function Navbar() {
       submenu: [
         {
           title: "Quality Assurance & Controls",
-          href: "#quality",
-          items: [
-            "Ultrasonic Testing (UT)",
-            "Magnetic Particle Testing (MT)",
-            "Dye Penetrant Testing (PT)",
-            "Radiographic Testing (RT)",
-            "Visual Testing (VT)"
-          ]
+          href: "/quality-assurance/"
+        },
+        {
+          title: "Field/Industrial Inspection",
+          href: "/field-industrial/"
         },
         {
           title: "Specialized Services",
-          href: "#specialized",
-          items: [
-            "Third Party Inspection",
-            "Vendor Inspection",
-            "Expediting Services",
-            "Technical Consulting"
-          ]
+          href: "/specialized-services/"
+        },
+        {
+          title: "Standard NDT Services",
+          href: "/standard-ndt/"
+        },
+        {
+          title: "Capacity Building Training",
+          href: "/capacity-building/"
         }
       ]
     },
@@ -115,7 +114,7 @@ export default function Navbar() {
                 <div className="bg-blue-700/30 rounded-full p-1 mr-2 group-hover:bg-blue-600/50 transition-all duration-300">
                   <Phone className="h-3 w-3" />
                 </div>
-                <span className="whitespace-nowrap">(+202) 22879691</span>
+                <span className="whitespace-nowrap">(02) 22-8-79-691</span>
               </a>
               <a href="mailto:az.qualitycontrol@gmail.com" className="hidden md:flex items-center hover:text-blue-200 transition-all duration-300 group">
                 <div className="bg-blue-700/30 rounded-full p-1 mr-2 group-hover:bg-blue-600/50 transition-all duration-300">
@@ -195,25 +194,17 @@ export default function Navbar() {
                         <NavigationMenuTrigger className="text-sm font-medium hover:text-blue-600 data-[state=open]:text-blue-600">
                           {link.name}
                         </NavigationMenuTrigger>
-                        <NavigationMenuContent className="p-6 min-w-[500px] bg-white border rounded-xl shadow-2xl">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <NavigationMenuContent className="p-4 min-w-[300px] bg-white border rounded-xl shadow-2xl">
+                          <div className="space-y-2">
                             {link.submenu.map((section) => (
-                              <div key={section.title}>
-                                <Link
-                                  href={`/services${section.href}`}
-                                  className="font-bold text-blue-800 hover:underline block mb-2"
-                                  onClick={(e) => handleServiceLinkClick(e, section.href)}
-                                >
-                                  {section.title}
-                                </Link>
-                                <ul className="space-y-2 text-sm text-gray-700">
-                                  {section.items.map((item) => (
-                                    <li key={item} className="pl-4 border-l-2 border-gray-200">
-                                      {item}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
+                              <Link
+                                key={section.title}
+                                href={`/services${section.href}`}
+                                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                                onClick={(e) => handleServiceLinkClick(e, section.href)}
+                              >
+                                {section.title}
+                              </Link>
                             ))}
                           </div>
                         </NavigationMenuContent>
@@ -282,24 +273,16 @@ export default function Navbar() {
                     {dropdownOpen && (
                       <div className="mt-2 pl-4 space-y-2">
                         {link.submenu.map((section) => (
-                          <div key={section.title}>
-                            <button
-                              onClick={() => {
-                                router.push(`/services${section.href}`);
-                                setIsMenuOpen(false);
-                              }}
-                              className="block w-full text-left text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
-                            >
-                              {section.title}
-                            </button>
-                            <ul className="pl-4 mt-1 space-y-1">
-                              {section.items.map((item) => (
-                                <li key={item} className="text-sm text-gray-500 hover:text-gray-700 pl-2 py-1">
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          <button
+                            key={section.title}
+                            onClick={() => {
+                              router.push(`/services${section.href}`);
+                              setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
+                          >
+                            {section.title}
+                          </button>
                         ))}
                       </div>
                     )}

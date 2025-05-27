@@ -28,13 +28,9 @@ export default function Hero() {
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             <RevealText text="Engineering Excellence & Technical Expertise" />
-          </h1>
-
-          <FadeIn delay={500} duration={800}>
+          </h1>          <FadeIn delay={500} duration={800}>
             <p className="text-xl md:text-2xl text-gray-300 mb-8">
-              Providing high-quality inspection, testing, and technical
-              consulting services since 2012. Trusted by industry leaders across
-              the Middle East.
+              AZ is a third party inspection and capacity building body, aiming to increase the capacity building of technicians and engineers working in metal construction, oil and gas services. We provide NDT and quality inspection services since 2012.
             </p>
           </FadeIn>
 

@@ -20,15 +20,15 @@ export default function AboutPage() {
               <div className="bg-white rounded-xl shadow-lg p-8">
                 <h2 className="text-2xl font-semibold mb-4 text-gray-900">
                   Company Overview
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  AZ International specializes in engineering inspection,
-                  technical consultancy, and engineering training services,
-                  adhering to the highest international standards in
-                  Non-Destructive Testing (NDT), quality assurance, and welding.
-                  Founded in 2012 by distinguished university professors and
-                  industry experts with extensive local and international
-                  experience.
+                </h2>                <p className="text-gray-700 leading-relaxed">
+                  AZ is a third party inspection and capacity building body,
+                  aiming to increase the capacity building of technicians and
+                  engineers who are working in the field of metal construction,
+                  oil and gas services, as well we are providing the NDT and
+                  quality inspection services. AZ was established in 2012 to
+                  create high reliable certification body acquiring interactive
+                  experience in the field of quality control inspection and
+                  capacity building courses.
                 </p>
               </div>
             </FadeIn>
@@ -64,14 +64,15 @@ export default function AboutPage() {
             <div className="bg-white rounded-xl shadow-lg p-8 mb-16">
               <h2 className="text-2xl font-semibold mb-4 text-gray-900">
                 Our Expertise
-              </h2>
-              <p className="text-gray-700 leading-relaxed">
+              </h2>              <p className="text-gray-700 leading-relaxed">
                 AZ is a third-party inspection and capacity-building
-                organization established in 2012, specializing in increasing the
-                competencies of engineers and technicians involved in metal
-                construction, oil and gas sectors. We provide high-quality
-                Non-Destructive Testing (NDT), quality control, and inspection
-                services.
+                organization established in 2012, aiming to increase the capacity
+                building of technicians and engineers who are working in the
+                field of metal construction, oil and gas services. We seek to
+                provide highly qualitative services to develop human resources
+                interested in working in steel fabrication and construction in oil
+                and gas, chemical, fertilizers, cement, and electrical power
+                plants sectors.
               </p>
             </div>
           </FadeIn>

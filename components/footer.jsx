@@ -30,10 +30,10 @@ export default function Footer() {
                 </h3>
                 <span className="text-[10px] text-blue-300/80 uppercase tracking-wider">Engineering & Technical Consulting</span>
               </div>
-            </div>
-            <p className="text-gray-300/90 mb-3 text-xs leading-relaxed max-w-md">
-              Engineering & Technical Consulting since 2012, specializing in inspection, quality control, and technical
-              training services. We provide high-quality engineering solutions to clients across various industries.
+            </div>            <p className="text-gray-300/90 mb-3 text-xs leading-relaxed max-w-md">
+              Third party inspection and capacity building body since 2012, specializing in NDT, quality control inspection,
+              and capacity building courses. We provide high-quality services to develop human resources in steel fabrication,
+              oil and gas, chemical, fertilizers, cement and electrical power plants sectors.
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export default function Footer() {
                 <div className="bg-blue-800/30 p-1.5 rounded-full mr-2.5 group-hover:bg-blue-700/50 transition-all duration-300">
                   <Phone className="h-3 w-3 text-blue-300 flex-shrink-0" />
                 </div>
-                <a href="tel:+20222879691" className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300">(+202) 22879691</a>
+                <a href="tel:+20222879691" className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300">(02) 22-8-79-691</a>
               </li>
               <li className="flex items-center group">
                 <div className="bg-blue-800/30 p-1.5 rounded-full mr-2.5 group-hover:bg-blue-700/50 transition-all duration-300">
