@@ -390,22 +390,22 @@ export default function ClientsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                       {clients.map((client, index) => (
                         <FadeIn key={index} delay={300 + index * 50}>
-                          <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white">
+                          <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white h-[400px] md:h-[450px]">
                             {/* Gradient Border Effect */}
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-[1px] rounded-lg">
                               <div className="bg-white rounded-lg h-full w-full"></div>
                             </div>
 
-                            <CardContent className="relative z-10 flex flex-col items-center justify-center p-6 md:p-8 h-full">
+                            <CardContent className="relative z-10 flex flex-col items-center justify-between p-6 md:p-8 h-full">
                               {/* Logo Container with Enhanced Styling */}
-                              <div className="relative mb-6 group-hover:scale-105 transition-transform duration-300">
+                              <div className="relative mb-4 group-hover:scale-105 transition-transform duration-300 flex justify-center flex-shrink-0">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
-                                <div className="relative h-24 md:h-28 w-full max-w-[200px] p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <div className="relative h-20 md:h-24 w-full max-w-[180px] p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center">
                                   <LazyImage
                                     src={client.logo}
                                     alt={`${client.name} logo`}
-                                    width={200}
-                                    height={112}
+                                    width={180}
+                                    height={96}
                                     className={`object-contain w-full h-full filter grayscale group-hover:grayscale-0 transition-all duration-500 ${
                                       client.specialClass || ""
                                     }`}
@@ -415,28 +415,28 @@ export default function ClientsPage() {
                               </div>
 
                               {/* Client Name with Better Typography */}
-                              <h4 className="font-bold text-lg md:text-xl mb-4 text-center text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
+                              <h4 className="font-bold text-lg mb-3 text-center text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[3rem] flex items-center justify-center flex-shrink-0">
                                 {client.name}
                               </h4>
 
                               {/* Services Description with Enhanced Styling */}
-                              <div className="text-center space-y-3 flex-1">
-                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                              <div className="text-center space-y-3 flex-1 flex flex-col justify-center">
+                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100 flex-1 flex flex-col justify-center">
                                   <div className="flex items-center justify-center gap-2 mb-2">
                                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                    <span className="font-semibold text-blue-800 text-sm uppercase tracking-wide">
+                                    <span className="font-semibold text-blue-800 text-xs uppercase tracking-wide">
                                       Services
                                     </span>
                                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                   </div>
-                                  <p className="text-gray-700 text-sm leading-relaxed">
+                                  <p className="text-gray-700 text-sm leading-relaxed line-clamp-4">
                                     {client.description}
                                   </p>
                                 </div>
 
                                 {client.additional && (
-                                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                                    <p className="text-xs text-blue-700 font-medium italic">
+                                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-2">
+                                    <p className="text-xs text-blue-700 font-medium italic line-clamp-2">
                                       💡 {client.additional}
                                     </p>
                                   </div>
@@ -444,7 +444,7 @@ export default function ClientsPage() {
                               </div>
 
                               {/* Partnership Badge */}
-                              <div className="mt-4 pt-4 border-t border-gray-100 w-full">
+                              <div className="mt-3 pt-3 border-t border-gray-100 w-full flex-shrink-0">
                                 <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
                                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                                   <span>Active Partnership</span>
