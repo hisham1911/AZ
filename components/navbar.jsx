@@ -139,11 +139,13 @@ export default function Navbar() {
                   az.qualitycontrol@gmail.com
                 </span>
               </a>
-            </div>
+            </div>{" "}
             {/* Social icons - centered on mobile, right-aligned on desktop */}
             <div className="flex space-x-3 mx-auto sm:mx-0">
               <a
-                href="#"
+                href="https://www.facebook.com/share/191aoswa1U/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="group p-1 relative overflow-hidden"
               >
@@ -151,17 +153,25 @@ export default function Navbar() {
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 rounded-full scale-0 group-hover:scale-100 transition-all duration-300 group-hover:animate-ping-once"></div>
                 <Facebook className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
               </a>
-              <a href="#" aria-label="Twitter" className="group p-1 relative">
-                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
-                <Twitter className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
-              </a>
-              <a href="#" aria-label="LinkedIn" className="group p-1 relative">
-                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
-                <Linkedin className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
-              </a>
-              <a href="#" aria-label="Instagram" className="group p-1 relative">
+              <a
+                href="https://www.instagram.com/az.qualitycontrol/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="group p-1 relative"
+              >
                 <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
                 <Instagram className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/az-engineering-3721b718b/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="group p-1 relative"
+              >
+                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/20 rounded-full scale-0 group-hover:scale-100 transition-all duration-300"></div>
+                <Linkedin className="h-4 w-4 group-hover:text-blue-200 transition-all duration-300 relative z-10" />
               </a>
             </div>
           </div>
