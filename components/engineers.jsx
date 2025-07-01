@@ -71,8 +71,9 @@ export default function Engineers() {
                   />
                 </div>
                 <div className="p-6">
+                  {" "}
                   <h3 className="text-xl font-bold mb-2 text-gray-900">
-                    Dr. Eng. Waleed A. Mohrez
+                    Professor/ Dr. Eng. Waleed Mohrez
                   </h3>
                   <p className="text-blue-600 font-semibold mb-4">
                     Chief Executive Officer (CEO)
@@ -80,11 +81,12 @@ export default function Engineers() {
                   <div className="space-y-2 text-gray-700 text-sm">
                     <p className="flex items-start">
                       <span className="mr-2 text-blue-600">•</span>
-                      Doctorate in Materials Engineering from Japan
+                      Doctorate Degree In mechanical and material design
                     </p>
                     <p className="flex items-start">
                       <span className="mr-2 text-blue-600">•</span>
-                      Associate Professor of Materials Engineering
+                      More than 22 years experience in industrial sector of both
+                      process and construction field
                     </p>
                     <p className="flex items-start">
                       <span className="mr-2 text-blue-600">•</span>
