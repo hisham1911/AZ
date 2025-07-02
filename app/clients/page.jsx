@@ -93,9 +93,9 @@ const clientsBySector = {
   ],
   "Manufacturing & Industrial": [
     {
-      name: "Silo Foods",
-      logo: "/images/clients/silo-foods.png",
-      description: "Third party inspection & technical consulting",
+      name: "SILO FOODS",
+      logo: "/images/clients/silo-foods.jpg",
+      description: "Food industry quality assurance",
     },
     {
       name: "Sinoma-CDI",

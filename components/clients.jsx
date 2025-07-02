@@ -55,6 +55,11 @@ export default function Clients() {
       logo: "/images/clients/guc.png",
       description: "Radiation protection cladding",
     },
+    {
+      name: "SILO FOODS",
+      logo: "/images/clients/silo-foods.jpg",
+      description: "Food industry quality assurance",
+    },
   ];
 
   const handleDotClick = (index) => {
@@ -99,13 +104,13 @@ export default function Clients() {
                   >
                     <Card className="border-none shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 h-full bg-white">
                       <CardContent className="flex flex-col items-center justify-center p-6">
-                        <div className="relative h-24 w-48 mb-4">
+                        <div className="relative h-32 w-56 mb-4 flex items-center justify-center">
                           <LazyImage
                             src={client.logo}
                             alt={`${client.name} logo`}
-                            width={192}
-                            height={96}
-                            className={`object-contain filter grayscale hover:grayscale-0 transition-all duration-300 ${
+                            width={224}
+                            height={128}
+                            className={`object-contain transition-all duration-300 max-w-full max-h-full ${
                               client.specialClass || ""
                             }`}
                             fallback="/placeholder.svg"
@@ -128,7 +133,7 @@ export default function Clients() {
 
             {/* Navigation Dots */}
             <div className="flex justify-center gap-2 mt-6">
-              {Array.from({ length: 8 }).map((_, index) => (
+              {Array.from({ length: 9 }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => handleDotClick(index)}
