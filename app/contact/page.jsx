@@ -194,7 +194,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-medium">Email</h3>
                       <p className="text-gray-600">
-                        az.qualitycontrol@gmail.com
+                        info@azinternational-eg.com
                       </p>
                     </div>
                   </div>

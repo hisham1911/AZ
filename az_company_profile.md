@@ -232,6 +232,6 @@ This training course includes the following training methodologies:
 
 **Tel/FAX:** (02) 22-8-79-691
 
-**Email:** az.qualitycontrol@gmail.com
+**Email:** info@azinternational-eg.com
 
 **Website:** www.azinternational-eg.com

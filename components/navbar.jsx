@@ -129,14 +129,14 @@ export default function Navbar() {
                 <span className="whitespace-nowrap">(02) 22-8-79-691</span>
               </a>
               <a
-                href="mailto:az.qualitycontrol@gmail.com"
+                href="mailto:info@azinternational-eg.com"
                 className="hidden md:flex items-center hover:text-blue-200 transition-all duration-300 group"
               >
                 <div className="bg-blue-700/30 rounded-full p-1 mr-2 group-hover:bg-blue-600/50 transition-all duration-300">
                   <Mail className="h-3 w-3" />
                 </div>
                 <span className="whitespace-nowrap">
-                  az.qualitycontrol@gmail.com
+                  info@azinternational-eg.com
                 </span>
               </a>
             </div>{" "}

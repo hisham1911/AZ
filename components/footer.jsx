@@ -81,10 +81,10 @@ export default function Footer() {
                   <Mail className="h-3 w-3 text-blue-300 flex-shrink-0" />
                 </div>
                 <a
-                  href="mailto:az.qualitycontrol@gmail.com"
+                  href="mailto:info@azinternational-eg.com"
                   className="text-gray-300/90 text-xs group-hover:text-blue-200 transition-colors duration-300"
                 >
-                  az.qualitycontrol@gmail.com
+                  info@azinternational-eg.com
                 </a>
               </li>
             </ul>
