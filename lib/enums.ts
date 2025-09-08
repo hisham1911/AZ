@@ -1,18 +1,18 @@
 /**
  * Service method enum
  */
-export const ServiceMethod = {
-  MagneticParticleTesting: 1,
-  LiquidPenetrantTesting: 2,
-  RadiographicTesting: 3,
-  UltrasonicTesting: 4,
-  VisualTesting: 5,
-};
+export enum ServiceMethod {
+  MagneticParticleTesting = 1,
+  LiquidPenetrantTesting,
+  RadiographicTesting,
+  UltrasonicTesting,
+  VisualTesting,
+}
 
 /**
  * Service method labels
  */
-export const ServiceMethodLabels = {
+export const ServiceMethodLabels: Record<ServiceMethod, string> = {
   [ServiceMethod.MagneticParticleTesting]: "Magnetic Particle Testing",
   [ServiceMethod.LiquidPenetrantTesting]: "Liquid Penetrant Testing",
   [ServiceMethod.RadiographicTesting]: "Radiographic Testing",
@@ -42,6 +42,6 @@ export const ServiceMethodOptions = [
  * @param {number} method - Method ID
  * @returns {string} Method label
  */
-export function getServiceMethodLabel(method) {
+export function getServiceMethodLabel(method: ServiceMethod): string {
   return ServiceMethodLabels[method] || "Unknown Method";
 }

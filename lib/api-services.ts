@@ -5,6 +5,8 @@
  * يتصل بنقاط نهاية API الحقيقية لإدارة الشهادات
  */
 
+import type { Service, ServiceDto } from "./types";
+
 // عنوان API الأساسي
 const API_BASE_URL = "https://azinternational-eg.com/api";
 
@@ -13,18 +15,18 @@ const CACHE_TTL = 5 * 60 * 1000;
 
 // كائن للتخزين المؤقت
 const cache = {
-  data: new Map(),
-  timestamps: new Map(),
+  data: new Map<string, unknown>(),
+  timestamps: new Map<string, number>(),
 
   // حفظ البيانات في التخزين المؤقت
-  set(key, data) {
+  set<T>(key: string, data: T): T {
     this.data.set(key, data);
     this.timestamps.set(key, Date.now());
     return data;
   },
 
   // الحصول على البيانات من التخزين المؤقت
-  get(key) {
+  get<T>(key: string): T | null {
     const timestamp = this.timestamps.get(key);
     if (!timestamp) return null;
 
@@ -36,11 +38,11 @@ const cache = {
       return null;
     }
 
-    return this.data.get(key);
+    return this.data.get(key) as T;
   },
 
   // مسح التخزين المؤقت
-  invalidate(keyPattern) {
+  invalidate(keyPattern?: RegExp | string): void {
     if (keyPattern instanceof RegExp) {
       // مسح المفاتيح التي تطابق النمط
       [...this.data.keys()].forEach((key) => {
@@ -65,7 +67,7 @@ const cache = {
  * الحصول على جميع الشهادات
  * @returns {Promise<Array>} وعد يحتوي على مصفوفة من الشهادات
  */
-export async function getAllServices() {
+export async function getAllServices(): Promise<Service[]> {
   const cacheKey = "getAllServices";
   const cachedData = cache.get(cacheKey);
 
@@ -99,7 +101,7 @@ export async function getAllServices() {
  * @param {string} search - نص البحث (اسم)
  * @returns {Promise<Array>} وعد يحتوي على مصفوفة من الشهادات المطابقة
  */
-export async function searchServiceByName(search) {
+export async function searchServiceByName(search: string): Promise<Service[]> {
   try {
     const response = await fetch(
       `${API_BASE_URL}/Services/searchByName?search=${encodeURIComponent(
@@ -148,7 +150,7 @@ export async function searchServiceByName(search) {
  * @param {string} search - نص البحث (رقم تسلسلي)
  * @returns {Promise<Array>} وعد يحتوي على مصفوفة من الشهادات المطابقة
  */
-export async function searchServiceBySerialNumber(search) {
+export async function searchServiceBySerialNumber(search: string): Promise<Service[]> {
   try {
     const response = await fetch(
       `${API_BASE_URL}/Services/searchByS_N?search=${encodeURIComponent(
@@ -197,7 +199,7 @@ export async function searchServiceBySerialNumber(search) {
  * @param {string} search - Search text (ID or serial number)
  * @returns {Promise<Object>} Promise containing the matching certificate
  */
-export async function searchService(search) {
+export async function searchService(search: string): Promise<Service | null> {
   try {
     // Check if search is a serial number
     const results = await searchServiceBySerialNumber(search);
@@ -245,7 +247,7 @@ export async function searchService(search) {
  * @param {Object} data - بيانات الشهادة الجديدة
  * @returns {Promise<Object>} وعد يحتوي على الشهادة المنشأة
  */
-export async function createService(data) {
+export async function createService(data: ServiceDto): Promise<Service> {
   try {
     // Format the data according to API requirements
     const formattedData = {
@@ -319,7 +321,7 @@ export async function createService(data) {
  * @param {Object} data - بيانات الشهادة المحدثة
  * @returns {Promise<Object>} وعد يحتوي على الشهادة المحدثة
  */
-export async function updateService(id, data) {
+export async function updateService(id: number, data: ServiceDto): Promise<Service> {
   try {
     // Format the data according to API requirements
     const formattedData = {
@@ -396,7 +398,7 @@ export async function updateService(id, data) {
  * @param {number} id - معرف الشهادة
  * @returns {Promise<boolean>} وعد يحتوي على نتيجة الحذف
  */
-export async function deleteService(id) {
+export async function deleteService(id: number): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}/Services/delete/${id}`, {
       method: "DELETE",
@@ -449,7 +451,14 @@ export async function deleteService(id) {
  * @param {string} emailData.message - محتوى البريد
  * @returns {Promise<Object>} - نتيجة عملية الإرسال
  */
-export async function sendEmail(emailData) {
+export interface EmailData {
+  userName: string;
+  userEmail: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendEmail(emailData: EmailData): Promise<unknown> {
   try {
     const response = await fetch(`${API_BASE_URL}/Email/SendEmail`, {
       method: "POST",
@@ -475,7 +484,7 @@ export async function sendEmail(emailData) {
  * @param {number} id - Certificate ID
  * @returns {Promise<Object>} Certificate data
  */
-export async function getServiceById(id) {
+export async function getServiceById(id: number | string): Promise<Service> {
   try {
     const response = await fetch(`${API_BASE_URL}/Services/getById?id=${id}`, {
       method: "GET",
