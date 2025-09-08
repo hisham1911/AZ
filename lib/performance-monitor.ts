@@ -1,10 +1,10 @@
 // Simple performance monitoring utility
 
 // Store performance marks
-const marks = new Map();
+const marks = new Map<string, number>();
 
 // Start timing a specific operation
-export function startMeasure(name) {
+export function startMeasure(name: string): void {
   if (typeof performance !== "undefined") {
     marks.set(name, performance.now());
     // Use the Performance API if available
@@ -17,7 +17,7 @@ export function startMeasure(name) {
 }
 
 // End timing and get the duration
-export function endMeasure(name, logToConsole = false) {
+export function endMeasure(name: string, logToConsole = false): number | null {
   if (typeof performance !== "undefined" && marks.has(name)) {
     const startTime = marks.get(name);
     const endTime = performance.now();
@@ -45,7 +45,7 @@ export function endMeasure(name, logToConsole = false) {
 }
 
 // Report performance metrics to analytics (can be connected to any analytics service)
-export function reportPerformanceMetrics() {
+export function reportPerformanceMetrics(): void {
   if (typeof performance === "undefined" || typeof window === "undefined")
     return;
 
@@ -54,7 +54,7 @@ export function reportPerformanceMetrics() {
   const paintTiming = performance.getEntriesByType("paint");
 
   if (navigationTiming) {
-    const metrics = {
+    const metrics: Record<string, number> = {
       // DNS lookup time
       dns:
         navigationTiming.domainLookupEnd - navigationTiming.domainLookupStart,
@@ -99,7 +99,7 @@ export function reportPerformanceMetrics() {
 }
 
 // Initialize performance monitoring
-export function initPerformanceMonitoring() {
+export function initPerformanceMonitoring(): void {
   if (typeof window !== "undefined") {
     // Report metrics when the page is fully loaded
     window.addEventListener("load", () => {
