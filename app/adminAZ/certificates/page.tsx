@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/animations/fade-in";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   searchServiceByName,
   searchServiceBySerialNumber,

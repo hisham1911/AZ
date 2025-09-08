@@ -31,7 +31,7 @@ import { CalendarIcon, ChevronLeft, Save } from "lucide-react";
 import { formatDate, addYears } from "@/utils/date-utils";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/animations/fade-in";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { createService } from "@/lib/api-services";
 
 /**

@@ -35,7 +35,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FadeIn } from "@/components/animations/fade-in";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 // API services
 import { deleteService } from "@/lib/api-services";
