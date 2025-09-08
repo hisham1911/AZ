@@ -11,7 +11,7 @@ const API_URL = "https://azinternational-eg.com/api";
  * التحقق من حالة تسجيل الدخول
  * @returns {boolean} ما إذا كان المستخدم مصادق عليه
  */
-export function isAuthenticated() {
+export function isAuthenticated(): boolean {
   if (typeof window === "undefined") return false;
   return localStorage.getItem("adminAuthenticated") === "true";
 }
@@ -22,7 +22,10 @@ export function isAuthenticated() {
  * @param {string} password كلمة المرور
  * @returns {Promise<{success: boolean, message: string}>} نتيجة تسجيل الدخول
  */
-export async function login(email, password) {
+export async function login(
+  email: string,
+  password: string
+): Promise<{ success: boolean; message: string }> {
   try {
     const response = await fetch(`${API_URL}/Acount/login`, {
       method: "POST",
@@ -47,7 +50,7 @@ export async function login(email, password) {
         message: "فشل تسجيل الدخول: بيانات الاعتماد غير صالحة",
       };
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login error:", error);
     return {
       success: false,
@@ -59,6 +62,6 @@ export async function login(email, password) {
 /**
  * تنفيذ تسجيل الخروج
  */
-export function logout() {
+export function logout(): void {
   localStorage.removeItem("adminAuthenticated");
 }

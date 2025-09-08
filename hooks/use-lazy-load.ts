@@ -9,8 +9,12 @@ import { useState, useEffect } from "react";
  * @param {boolean} [skipCondition=false] شرط لتخطي التحميل الكسول
  * @returns {boolean} حالة التحميل
  */
-export function useLazyLoad(initialState = false, delay = 0, skipCondition = false) {
-  const [isLoaded, setIsLoaded] = useState(initialState || skipCondition);
+export function useLazyLoad(
+  initialState = false,
+  delay = 0,
+  skipCondition = false
+) {
+  const [isLoaded, setIsLoaded] = useState<boolean>(initialState || skipCondition);
 
   useEffect(() => {
     // إذا كان يجب تخطي التحميل الكسول، نعيد true مباشرة
@@ -39,9 +43,11 @@ export function useLazyLoad(initialState = false, delay = 0, skipCondition = fal
  * @param {Object} options خيارات مراقبة التقاطع
  * @returns {Object} مرجع العنصر وحالة الرؤية
  */
-export function useVisibleLoad(options = { threshold: 0.1 }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [ref, setRef] = useState(null);
+export function useVisibleLoad(
+  options: IntersectionObserverInit = { threshold: 0.1 }
+) {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [ref, setRef] = useState<Element | null>(null);
 
   useEffect(() => {
     if (!ref) return;
@@ -57,5 +63,8 @@ export function useVisibleLoad(options = { threshold: 0.1 }) {
     };
   }, [ref, options]);
 
-  return { ref: setRef, isVisible };
+  return { ref: setRef, isVisible } as {
+    ref: (node: Element | null) => void;
+    isVisible: boolean;
+  };
 }
