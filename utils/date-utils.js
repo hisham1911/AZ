@@ -9,7 +9,7 @@
  * @param {string} formatStr - صيغة التنسيق (مثل "PPP" للتاريخ الكامل)
  * @returns {string} - التاريخ المنسق كنص
  */
-export function formatDate(date: Date | string, formatStr = "PPP"): string {
+export function formatDate(date, formatStr = "PPP") {
   if (!date) return ""
 
   // التأكد من أن التاريخ هو كائن Date
@@ -58,7 +58,7 @@ export function formatDate(date: Date | string, formatStr = "PPP"): string {
  * @param {number} days - عدد الأيام المراد إضافتها
  * @returns {Date} - التاريخ الجديد بعد إضافة الأيام
  */
-export function addDays(date: Date | string, days: number): Date {
+export function addDays(date, days) {
   const result = new Date(date)
   result.setDate(result.getDate() + days)
   return result
@@ -70,7 +70,7 @@ export function addDays(date: Date | string, days: number): Date {
  * @param {number} months - عدد الشهور المراد إضافتها
  * @returns {Date} - التاريخ الجديد بعد إضافة الشهور
  */
-export function addMonths(date: Date | string, months: number): Date {
+export function addMonths(date, months) {
   const result = new Date(date)
   result.setMonth(result.getMonth() + months)
   return result
@@ -82,7 +82,7 @@ export function addMonths(date: Date | string, months: number): Date {
  * @param {number} years - عدد السنوات المراد إضافتها
  * @returns {Date} - التاريخ الجديد بعد إضافة السنوات
  */
-export function addYears(date: Date | string, years: number): Date {
+export function addYears(date, years) {
   const result = new Date(date)
   result.setFullYear(result.getFullYear() + years)
   return result
@@ -94,7 +94,7 @@ export function addYears(date: Date | string, years: number): Date {
  * @param {Date} date2 - التاريخ الثاني
  * @returns {boolean} - true إذا كان التاريخان متساويين، false إذا كانا مختلفين
  */
-export function isSameDay(date1: Date | string, date2: Date | string): boolean {
+export function isSameDay(date1, date2) {
   if (!date1 || !date2) return false
 
   const d1 = new Date(date1)
@@ -109,7 +109,7 @@ export function isSameDay(date1: Date | string, date2: Date | string): boolean {
  * @param {Date} date2 - التاريخ الثاني
  * @returns {boolean} - true إذا كان التاريخ الأول قبل التاريخ الثاني، false إذا لم يكن كذلك
  */
-export function isBefore(date1: Date | string, date2: Date | string): boolean {
+export function isBefore(date1, date2) {
   if (!date1 || !date2) return false
 
   return new Date(date1) < new Date(date2)
@@ -121,7 +121,7 @@ export function isBefore(date1: Date | string, date2: Date | string): boolean {
  * @param {Date} date2 - التاريخ الثاني
  * @returns {boolean} - true إذا كان التاريخ الأول بعد التاريخ الثاني، false إذا لم يكن كذلك
  */
-export function isAfter(date1: Date | string, date2: Date | string): boolean {
+export function isAfter(date1, date2) {
   if (!date1 || !date2) return false
 
   return new Date(date1) > new Date(date2)
@@ -132,7 +132,7 @@ export function isAfter(date1: Date | string, date2: Date | string): boolean {
  * @param {Date} date - التاريخ المرجعي
  * @returns {Date} - أول يوم في الشهر
  */
-export function startOfMonth(date: Date | string): Date {
+export function startOfMonth(date) {
   const result = new Date(date)
   result.setDate(1)
   return result
@@ -143,7 +143,7 @@ export function startOfMonth(date: Date | string): Date {
  * @param {Date} date - التاريخ المرجعي
  * @returns {Date} - آخر يوم في الشهر
  */
-export function endOfMonth(date: Date | string): Date {
+export function endOfMonth(date) {
   const result = new Date(date)
   result.setMonth(result.getMonth() + 1)
   result.setDate(0)
@@ -155,7 +155,7 @@ export function endOfMonth(date: Date | string): Date {
  * @param {Date|string} date - التاريخ المراد تنسيقه
  * @returns {string} - التاريخ المنسق
  */
-export function formatDateForDisplay(date: Date | string): string {
+export function formatDateForDisplay(date) {
   if (!date) return ""
 
   const dateObj = typeof date === "string" ? new Date(date) : date
@@ -173,7 +173,7 @@ export function formatDateForDisplay(date: Date | string): string {
  * @param {Date|string} date - التاريخ المراد تنسيقه
  * @returns {string} - التاريخ والوقت المنسقين
  */
-export function formatDateTimeForDisplay(date: Date | string): string {
+export function formatDateTimeForDisplay(date) {
   if (!date) return ""
 
   const dateObj = typeof date === "string" ? new Date(date) : date

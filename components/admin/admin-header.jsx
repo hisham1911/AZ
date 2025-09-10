@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export function AdminHeader() {
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState("")
 
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center px-4 md:px-6">
