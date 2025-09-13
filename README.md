@@ -38,12 +38,14 @@ Follow these instructions to set up the project locally.
 ### Installation
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <your-repo-url>
     cd AZ
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     pnpm install
     ```
