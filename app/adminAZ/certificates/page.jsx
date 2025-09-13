@@ -43,7 +43,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDateForDisplay } from "@/utils/date-utils";
 import Link from "next/link";
 import { Edit as EditIcon, Trash2 as TrashIcon } from "lucide-react";
-import { getServiceMethodLabel } from "@/lib/enums";
+import { getServiceMethodLabel, getCertificateTypeLabel } from "@/lib/enums";
 
 /**
  * Certificate Management Page
@@ -413,10 +413,9 @@ export default function CertificatesPage() {
                   <TableHeader>
                     <TableRow className="bg-muted/50">
                       <TableHead className="w-[120px]">Serial Number</TableHead>
-                      <TableHead className="w-[200px]">Method</TableHead>
-                      <TableHead className="w-[120px]">Start Date</TableHead>
+                      <TableHead className="w-[150px]">Method</TableHead>
+                      <TableHead className="w-[120px]">Type</TableHead>
                       <TableHead className="w-[120px]">End Date</TableHead>
-                      <TableHead>Location</TableHead>
                       <TableHead className="w-[100px] text-right">
                         Actions
                       </TableHead>
@@ -436,32 +435,12 @@ export default function CertificatesPage() {
                             {getServiceMethodLabel(cert.method)}
                           </Badge>
                         </TableCell>
-                        <TableCell>{formatDate(cert.startDate)}</TableCell>
-                        <TableCell>{formatDate(cert.endDate)}</TableCell>
-                        <TableCell className="max-w-[300px]">
-                          <div className="truncate">
-                            {cert.country ? (
-                              <div className="flex flex-col">
-                                {cert.streetAddress && (
-                                  <span className="text-sm truncate">
-                                    {cert.streetAddress}
-                                  </span>
-                                )}
-                                <span className="flex items-center gap-1">
-                                  {cert.state && <span>{cert.state}</span>}
-                                  {cert.state && cert.country && <span>•</span>}
-                                  {cert.country && (
-                                    <span className="font-medium">
-                                      {cert.country}
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            ) : (
-                              getLocationString(cert)
-                            )}
-                          </div>
+                        <TableCell>
+                          <Badge variant="outline" className="font-normal">
+                            {getCertificateTypeLabel(cert.type)}
+                          </Badge>
                         </TableCell>
+                        <TableCell>{formatDate(cert.endDate)}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button variant="outline" size="icon" asChild>

@@ -23,6 +23,7 @@ import {
   searchServiceByName,
   searchServiceBySerialNumber,
 } from "@/lib/api-services";
+import { getServiceMethodLabel, getCertificateTypeLabel } from "@/lib/enums";
 
 export default function CertificatesPage() {
   const router = useRouter();
@@ -97,17 +98,12 @@ export default function CertificatesPage() {
               return {
                 id: `CERT-${result.srId || result.id || "Unknown"}`,
                 name: result.name || "N/A",
-                title: getMethodTitle(result.method),
+                title: getServiceMethodLabel(result.method),
+                type: getCertificateTypeLabel(result.type),
                 serialNumber: result.s_N || "N/A",
-                issueDate: result.startDate
-                  ? new Date(result.startDate).toLocaleDateString()
-                  : "N/A",
                 expiryDate: result.endDate
                   ? new Date(result.endDate).toLocaleDateString()
                   : "N/A",
-                country: result.country || "",
-                state: result.state || "",
-                streetAddress: result.streetAddress || "",
                 status:
                   result.endDate && new Date(result.endDate) > new Date()
                     ? "active"
@@ -118,12 +114,9 @@ export default function CertificatesPage() {
                 id: `CERT-${result.srId || result.id || "Unknown"}`,
                 name: result.name || "Unknown",
                 title: "Certificate",
+                type: "Unknown Type",
                 serialNumber: result.s_N || "Unknown",
-                issueDate: "N/A",
                 expiryDate: "N/A",
-                country: "",
-                state: "",
-                streetAddress: "",
                 status: "unknown",
               };
             }
@@ -330,10 +323,12 @@ export default function CertificatesPage() {
 
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-5 w-5 text-blue-600" />
+                          <Award className="h-5 w-5 text-blue-600" />
                           <div>
-                            <p className="text-sm text-gray-500">Issue Date</p>
-                            <p className="font-medium">{cert.issueDate}</p>
+                            <p className="text-sm text-gray-500">
+                              Certificate Type
+                            </p>
+                            <p className="font-medium">{cert.type}</p>
                           </div>
                         </div>
 
@@ -347,26 +342,7 @@ export default function CertificatesPage() {
                       </div>
                     </div>
 
-                    <div className="pt-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <p className="text-sm text-gray-500">Location</p>
-                          <p className="font-medium">
-                            {cert.country || cert.state || cert.streetAddress
-                              ? `${cert.country || ""}${
-                                  cert.country && cert.state ? ", " : ""
-                                }${cert.state || ""}${
-                                  (cert.country || cert.state) &&
-                                  cert.streetAddress
-                                    ? ", "
-                                    : ""
-                                }${cert.streetAddress || ""}`
-                              : "N/A"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <div className="pt-2"></div>
                   </CardContent>
                 </Card>
               ))}
