@@ -34,6 +34,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/animations/fade-in";
 import { updateService, getServiceById } from "@/lib/api-services";
+import { ServiceMethodOptions, CertificateTypeOptions } from "@/lib/enums";
 
 import React from "react";
 
@@ -51,11 +52,8 @@ export default function EditCertificatePage({ params }) {
     name: "",
     s_N: "",
     method: "1",
-    startDate: "",
+    type: "1",
     endDate: "",
-    country: "",
-    state: "",
-    streetAddress: "",
   });
 
   useEffect(() => {
@@ -68,13 +66,8 @@ export default function EditCertificatePage({ params }) {
           name: certificate.name || "",
           s_N: certificate.s_N || "",
           method: certificate.method?.toString() || "1",
-          startDate: certificate.startDate
-            ? new Date(certificate.startDate)
-            : "",
+          type: certificate.type?.toString() || "1",
           endDate: certificate.endDate ? new Date(certificate.endDate) : "",
-          country: certificate.country || "",
-          state: certificate.state || "",
-          streetAddress: certificate.streetAddress || "",
         });
       } catch (error) {
         toast({
@@ -142,14 +135,10 @@ export default function EditCertificatePage({ params }) {
         return;
       }
 
-      if (
-        formData.startDate &&
-        formData.endDate &&
-        new Date(formData.endDate) < new Date(formData.startDate)
-      ) {
+      if (formData.endDate && new Date(formData.endDate) < new Date()) {
         toast({
           title: "Date Error",
-          description: "Expiry date cannot be before issue date",
+          description: "Expiry date cannot be before current date",
           variant: "destructive",
         });
         setIsSaving(false);
@@ -158,11 +147,8 @@ export default function EditCertificatePage({ params }) {
 
       const updatedData = {
         ...formData,
-        location: {
-          country: formData.country || "",
-          state: formData.state || "",
-          streetAddress: formData.streetAddress || "",
-        },
+        method: parseInt(formData.method),
+        type: parseInt(formData.type),
       };
 
       await updateService(certificateId, updatedData);
@@ -264,17 +250,14 @@ export default function EditCertificatePage({ params }) {
                           <SelectValue placeholder="Select certificate method" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">
-                            Magnetic Particle Testing
-                          </SelectItem>
-                          <SelectItem value="2">
-                            Liquid Penetrant Testing
-                          </SelectItem>
-                          <SelectItem value="3">
-                            Radiographic Testing
-                          </SelectItem>
-                          <SelectItem value="4">Ultrasonic Testing</SelectItem>
-                          <SelectItem value="5">Visual Testing</SelectItem>
+                          {ServiceMethodOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value.toString()}
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -282,37 +265,27 @@ export default function EditCertificatePage({ params }) {
 
                   <div className="space-y-4">
                     <div>
-                      <Label>Issue Date</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal mt-1",
-                              !formData.startDate && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {formData.startDate ? (
-                              format(formData.startDate, "PPP", {
-                                locale: enUS,
-                              })
-                            ) : (
-                              <span>Select a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={formData.startDate}
-                            onSelect={(date) =>
-                              handleDateChange(date, "startDate")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <Label htmlFor="type">Certificate Type</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) =>
+                          handleSelectChange(value, "type")
+                        }
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Select certificate type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CertificateTypeOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value.toString()}
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>
@@ -341,58 +314,11 @@ export default function EditCertificatePage({ params }) {
                             onSelect={(date) =>
                               handleDateChange(date, "endDate")
                             }
-                            disabled={(date) => date < formData.startDate}
+                            disabled={(date) => date < new Date()}
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <h3 className="text-lg font-medium mb-4">
-                    Location Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        name="country"
-                        placeholder="Enter country name"
-                        value={formData.country || ""}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Required for location display
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="state">State/City</Label>
-                      <Input
-                        id="state"
-                        name="state"
-                        placeholder="Enter state or city name"
-                        value={formData.state || ""}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <Label htmlFor="streetAddress">Street Address</Label>
-                      <Textarea
-                        id="streetAddress"
-                        name="streetAddress"
-                        placeholder="Enter detailed address"
-                        value={formData.streetAddress || ""}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                        rows={3}
-                      />
                     </div>
                   </div>
                 </div>

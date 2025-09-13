@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/animations/fade-in";
 import { useToast } from "@/components/ui/use-toast";
 import { createService } from "@/lib/api-services";
+import { ServiceMethodOptions, CertificateTypeOptions } from "@/lib/enums";
 
 /**
  * Create New Certificate Page
@@ -47,13 +48,8 @@ export default function CreateCertificatePage() {
     name: "", // Certificate Name
     s_N: `CERT-${Math.floor(10000 + Math.random() * 90000)}`, // Serial Number
     method: "1", // Certificate Method
-    startDate: new Date(), // Issue Date
+    type: "1", // Certificate Type
     endDate: addYears(new Date(), 2), // Expiry Date
-    location: {
-      country: "", // Country
-      state: "", // State
-      streetAddress: "", // Street Address
-    },
   });
 
   // Form submission state
@@ -110,9 +106,8 @@ export default function CreateCertificatePage() {
         name: formData.name,
         s_N: formData.s_N,
         method: parseInt(formData.method),
-        startDate: formData.startDate.toISOString(),
+        type: parseInt(formData.type),
         endDate: formData.endDate.toISOString(),
-        location: formData.location,
       };
 
       await createService(serviceData);
@@ -207,15 +202,14 @@ export default function CreateCertificatePage() {
                         <SelectValue placeholder="Select certificate method" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">
-                          Magnetic Particle Testing
-                        </SelectItem>
-                        <SelectItem value="2">
-                          Liquid Penetrant Testing
-                        </SelectItem>
-                        <SelectItem value="3">Radiographic Testing</SelectItem>
-                        <SelectItem value="4">Ultrasonic Testing</SelectItem>
-                        <SelectItem value="5">Visual Testing</SelectItem>
+                        {ServiceMethodOptions.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value.toString()}
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -223,34 +217,27 @@ export default function CreateCertificatePage() {
 
                 <div className="space-y-4">
                   <div>
-                    <Label>Issue Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal mt-1",
-                            !formData.startDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.startDate ? (
-                            formatDate(formData.startDate)
-                          ) : (
-                            <span>Select a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <CustomCalendar
-                          mode="single"
-                          selected={formData.startDate}
-                          onSelect={(date) =>
-                            handleDateChange(date, "startDate")
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Label htmlFor="type">Certificate Type</Label>
+                    <Select
+                      value={formData.type}
+                      onValueChange={(value) =>
+                        handleSelectChange(value, "type")
+                      }
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select certificate type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CertificateTypeOptions.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value.toString()}
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -281,55 +268,6 @@ export default function CreateCertificatePage() {
                         />
                       </PopoverContent>
                     </Popover>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t">
-                <h3 className="text-lg font-medium mb-4">
-                  Location Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="location.country">Country</Label>
-                    <Input
-                      id="location.country"
-                      name="location.country"
-                      placeholder="Enter country name"
-                      value={formData.location.country}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="location.state">State</Label>
-                    <Input
-                      id="location.state"
-                      name="location.state"
-                      placeholder="Enter state name"
-                      value={formData.location.state}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                      required
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="location.streetAddress">
-                      Street Address
-                    </Label>
-                    <Textarea
-                      id="location.streetAddress"
-                      name="location.streetAddress"
-                      placeholder="Enter street address"
-                      value={formData.location.streetAddress}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                      rows={3}
-                      required
-                    />
                   </div>
                 </div>
               </div>
