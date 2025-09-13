@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Award,
@@ -14,6 +14,8 @@ import {
   AlertCircle,
   AlertTriangle,
   Loader2,
+  Upload,
+  FileSpreadsheet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +40,7 @@ import {
   searchServiceByName,
   searchServiceBySerialNumber,
   deleteService,
+  uploadExcelFile,
 } from "@/lib/api-services";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDateForDisplay } from "@/utils/date-utils";
@@ -60,6 +63,8 @@ export default function CertificatesPage() {
   const [searchType, setSearchType] = useState("name"); // Search type: 'name' or 'serial'
   const [error, setError] = useState(null); // API error if any
   const [hasSearched, setHasSearched] = useState(false); // Track if user has searched
+  const [isUploading, setIsUploading] = useState(false); // Track file upload state
+  const fileInputRef = useRef(null); // Reference to hidden file input
 
   /**
    * Function to fetch certificates based on search term and type
@@ -145,6 +150,67 @@ export default function CertificatesPage() {
    */
   const handleCreateCertificate = () => {
     router.push("/adminAZ/certificates/create");
+  };
+
+  /**
+   * Handle click on the Excel upload button
+   */
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  /**
+   * Handle file change event from input
+   * @param {Event} e - File input change event
+   */
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file is Excel
+    const validExcelTypes = [
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
+
+    if (!validExcelTypes.includes(file.type)) {
+      toast({
+        title: "خطأ في الملف",
+        description: "يرجى اختيار ملف Excel صالح (.xls أو .xlsx)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      // Upload the file
+      const result = await uploadExcelFile(file);
+
+      // Show success message
+      toast({
+        title: "تم رفع الملف بنجاح",
+        description: `تمت إضافة ${result.addedCount || "عدة"} شهادات جديدة.`,
+      });
+
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      // Show error message
+      toast({
+        title: "خطأ في رفع الملف",
+        description:
+          error.message || "حدث خطأ أثناء رفع الملف. يرجى المحاولة مرة أخرى.",
+        variant: "destructive",
+      });
+      setError(error.message);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   /**
@@ -293,6 +359,35 @@ export default function CertificatesPage() {
             </p>
           </div>
           <div className="flex gap-2">
+            {/* Hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              className="hidden"
+            />
+
+            {/* Upload Excel button */}
+            <Button
+              variant="outline"
+              onClick={handleUploadClick}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Upload Excel
+                </>
+              )}
+            </Button>
+
+            {/* Create Certificate button */}
             <Button onClick={handleCreateCertificate}>
               <Plus className="h-4 w-4 mr-2" /> Create Certificate
             </Button>
