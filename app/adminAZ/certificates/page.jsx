@@ -196,18 +196,20 @@ export default function CertificatesPage() {
 
       // Log the response to console
       console.log("Upload success response:", result);
-      
+
       // Method 1: Show success message in UI
-      setError({ 
-        type: "success", 
-        message: "Excel file uploaded successfully. Refresh the page to see changes." 
+      setError({
+        type: "success",
+        message:
+          "Excel file uploaded successfully. Refresh the page to see changes.",
       });
-      
+
       // Method 2: Using toast notification
       setTimeout(() => {
         toast({
           title: "✅ File Uploaded Successfully",
-          description: "The Excel file has been uploaded and certificates added to the system.",
+          description:
+            "The Excel file has been uploaded and certificates added to the system.",
           duration: 5000,
         });
       }, 300);
@@ -221,7 +223,8 @@ export default function CertificatesPage() {
       toast({
         title: "File Upload Error",
         description:
-          error.message || "An error occurred while uploading the file. Please try again.",
+          error.message ||
+          "An error occurred while uploading the file. Please try again.",
         variant: "destructive",
       });
       setError(error.message);
@@ -416,7 +419,9 @@ export default function CertificatesPage() {
       {error && (
         <FadeIn>
           <Alert variant={error.type === "success" ? "default" : "destructive"}>
-            <AlertTitle>{error.type === "success" ? "Success" : "Error"}</AlertTitle>
+            <AlertTitle>
+              {error.type === "success" ? "Success" : "Error"}
+            </AlertTitle>
             <AlertDescription>
               {typeof error === "string" ? error : error.message}
             </AlertDescription>
