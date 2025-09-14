@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/animations/fade-in";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   searchServiceByName,
   searchServiceBySerialNumber,
@@ -175,8 +175,8 @@ export default function CertificatesPage() {
 
     if (!validExcelTypes.includes(file.type)) {
       toast({
-        title: "خطأ في الملف",
-        description: "يرجى اختيار ملف Excel صالح (.xls أو .xlsx)",
+        title: "Invalid File",
+        description: "Please select a valid Excel file (.xls or .xlsx)",
         variant: "destructive",
       });
       return;
@@ -189,11 +189,28 @@ export default function CertificatesPage() {
       // Upload the file
       const result = await uploadExcelFile(file);
 
-      // Show success message
-      toast({
-        title: "تم رفع الملف بنجاح",
-        description: `تمت إضافة ${result.addedCount || "عدة"} شهادات جديدة.`,
+      // Refresh search results if there's an active search
+      if (hasSearched && searchQuery) {
+        handleSearch();
+      }
+
+      // Log the response to console
+      console.log("Upload success response:", result);
+      
+      // Method 1: Show success message in UI
+      setError({ 
+        type: "success", 
+        message: "Excel file uploaded successfully. Refresh the page to see changes." 
       });
+      
+      // Method 2: Using toast notification
+      setTimeout(() => {
+        toast({
+          title: "✅ File Uploaded Successfully",
+          description: "The Excel file has been uploaded and certificates added to the system.",
+          duration: 5000,
+        });
+      }, 300);
 
       // Reset the file input
       if (fileInputRef.current) {
@@ -202,9 +219,9 @@ export default function CertificatesPage() {
     } catch (error) {
       // Show error message
       toast({
-        title: "خطأ في رفع الملف",
+        title: "File Upload Error",
         description:
-          error.message || "حدث خطأ أثناء رفع الملف. يرجى المحاولة مرة أخرى.",
+          error.message || "An error occurred while uploading the file. Please try again.",
         variant: "destructive",
       });
       setError(error.message);
@@ -395,12 +412,14 @@ export default function CertificatesPage() {
         </div>
       </FadeIn>
 
-      {/* Display API error message if any */}
+      {/* Display API error or success message if any */}
       {error && (
         <FadeIn>
-          <Alert variant="destructive">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert variant={error.type === "success" ? "default" : "destructive"}>
+            <AlertTitle>{error.type === "success" ? "Success" : "Error"}</AlertTitle>
+            <AlertDescription>
+              {typeof error === "string" ? error : error.message}
+            </AlertDescription>
           </Alert>
         </FadeIn>
       )}
