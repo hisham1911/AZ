@@ -146,9 +146,11 @@ export default function EditCertificatePage({ params }) {
       }
 
       const updatedData = {
-        ...formData,
+        name: formData.name,
+        s_N: formData.s_N,
         method: parseInt(formData.method),
         type: parseInt(formData.type),
+        endDate: formData.endDate.toISOString(),
       };
 
       await updateService(certificateId, updatedData);

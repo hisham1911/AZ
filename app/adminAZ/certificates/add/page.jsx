@@ -110,9 +110,11 @@ export default function AddCertificatePage() {
 
       // Prepare data for submission
       const certificateData = {
-        ...formData,
+        name: formData.name,
+        s_N: formData.s_N,
         method: parseInt(formData.method),
         type: parseInt(formData.type),
+        endDate: formData.endDate.toISOString(),
       };
 
       const result = await createService(certificateData);
